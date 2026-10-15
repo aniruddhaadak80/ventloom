@@ -1,0 +1,51 @@
+# ventloom at a glance: the observatory, the relay daemon and the bulletin
+# service, started together so a reviewer can `docker compose up` and see all
+# three talking. Production deploys each piece independently, which is what
+# the fly.toml / railway / Dockerfiles do separately.
+
+services:
+  observatory:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  relay:
+    build:
+      context: ./services/relay
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - VENTLOOM_UPSTREAM=http://observatory:3000
+      - PORT=8080
+      - RELAY_INTERVAL_SECONDS=60
+      - RELAY_HISTORY=96
+    depends_on:
+      observatory:
+        condition: service_healthy
+    restart: unless-stopped
+
+  agents:
+    build:
+      context: ./services/agents
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    restart: unless-stopped
+
+networks:
+  default:
+    name: ventloom

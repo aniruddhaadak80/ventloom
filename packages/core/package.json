@@ -1,0 +1,47 @@
+{
+  "name": "@repo/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ventloom domain core — Mogi geodetic inversion, FFT spectral analysis, tephra fingerprints, alert engine",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./mogi": {
+      "types": "./dist/mogi.d.ts",
+      "default": "./src/mogi.ts"
+    },
+    "./fft": {
+      "types": "./dist/fft.d.ts",
+      "default": "./src/fft.ts"
+    },
+    "./tremor": {
+      "types": "./dist/tremor.d.ts",
+      "default": "./src/tremor.ts"
+    },
+    "./tephra": {
+      "types": "./dist/tephra.d.ts",
+      "default": "./src/tephra.ts"
+    },
+    "./forecast": {
+      "types": "./dist/forecast.d.ts",
+      "default": "./src/forecast.ts"
+    },
+    "./network": {
+      "types": "./dist/network.d.ts",
+      "default": "./src/network.ts"
+    },
+    "./rng": {
+      "types": "./dist/rng.d.ts",
+      "default": "./src/rng.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run"
+  },
+  "dependencies": {}
+}

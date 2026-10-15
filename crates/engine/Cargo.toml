@@ -1,0 +1,25 @@
+[package]
+name = "ventloom-engine"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.80"
+license = "MIT"
+description = "ventloom geodetic core in Rust: Mogi forward model, analytic Jacobian, Levenberg-Marquardt inversion, radix-2 FFT."
+repository = "https://github.com/aniruddhaadak80/ventloom"
+keywords = ["volcanology", "geodesy", "mogi", "fft", "inversion"]
+categories = ["science", "mathematics"]
+
+# The crate is deliberately dependency-free. Everything it computes is a
+# closed-form geophysical expression or a small dense linear solve, and pulling
+# in BLAS for a 4x4 normal-equation system would trade a build-time guarantee
+# (no native toolchain, no vendored Fortran) for nothing measurable.
+[dependencies]
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+
+[lib]
+name = "ventloom_engine"
+path = "src/lib.rs"

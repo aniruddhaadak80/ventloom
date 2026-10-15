@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ventloom
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
+    maxShutdownDelaySeconds: 30

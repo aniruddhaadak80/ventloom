@@ -1,0 +1,57 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+.pnp.cjs
+
+# build output
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+
+# Rust
+target/
+crates/**/target/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Go
+*.test
+*.out
+
+# test + coverage
+coverage/
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# environment — never commit secrets
+.env
+.env.*
+!.env.example
+.vercel
+*.local
+
+# editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+*.log
+
+# generated previews
+.asset-preview/
+

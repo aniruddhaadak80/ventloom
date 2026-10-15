@@ -1,0 +1,44 @@
+/**
+ * The app's own stylesheet.
+ *
+ * Tailwind v4 is driven entirely from CSS: `@import "tailwindcss"` pulls in the
+ * engine and `@import "@repo/ui/styles.css"` brings in the observatory's theme.
+ * The palette lives in the design system so the app never re-declares a colour,
+ * and the two base rules below are the only styling the app layer owns.
+ */
+
+@import "tailwindcss";
+@import "@repo/ui/styles.css";
+
+html {
+  color-scheme: dark;
+  background-color: var(--color-abyss);
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-abyss);
+  color: var(--color-ash);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus rings are visible on every interactive element; the keyboard path is
+   first-class here, not an afterthought. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-lava);
+  outline-offset: 2px;
+}
+
+/* The observatory has no essential animation, so this is a genuine switch-off
+   rather than a slowdown. `!important` is required because these rules must
+   override any component-level transition declarations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}

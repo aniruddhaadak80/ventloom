@@ -1,0 +1,33 @@
+{
+  "name": "@repo/seed",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ventloom seed world — volcano catalogue, station network and tephra geochemistry",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./catalogue": {
+      "types": "./dist/catalogue.d.ts",
+      "default": "./src/catalogue.ts"
+    },
+    "./stations": {
+      "types": "./dist/stations.d.ts",
+      "default": "./src/stations.ts"
+    },
+    "./tephra": {
+      "types": "./dist/tephra.d.ts",
+      "default": "./src/tephra.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@repo/core": "workspace:*"
+  }
+}
