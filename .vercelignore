@@ -1,0 +1,5 @@
+# Don't deploy the other polyglot services to Vercel (they ship via Docker/Fly/Render)
+services/
+crates/
+scripts/
+docs/
