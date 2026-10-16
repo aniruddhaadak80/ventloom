@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "ventloom seed world — volcano catalogue, station network and tephra geochemistry",
+  "description": "ventloom seed world - volcano catalogue, station network and tephra geochemistry",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

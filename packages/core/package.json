@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "ventloom domain core — Mogi geodetic inversion, FFT spectral analysis, tephra fingerprints, alert engine",
+  "description": "ventloom domain core - Mogi geodetic inversion, FFT spectral analysis, tephra fingerprints, alert engine",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

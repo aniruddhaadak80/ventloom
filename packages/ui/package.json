@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "ventloom design system — the primitives every observatory surface is built from",
+  "description": "ventloom design system - the primitives every observatory surface is built from",
   "exports": {
     ".": {
       "types": "./src/index.tsx",

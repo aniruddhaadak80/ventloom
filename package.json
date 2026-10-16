@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "ventloom — weave volcanic signals into an eruption forecast",
+  "description": "ventloom - weave volcanic signals into an eruption forecast",
   "packageManager": "bun@1.3.14",
   "workspaces": [
     "apps/*",
@@ -31,6 +31,7 @@
     "@biomejs/biome": "^2.2.0",
     "@playwright/test": "^1.56.0",
     "@types/node": "^22.15.0",
+    "next": "^15.5.0",
     "turbo": "^2.5.6",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

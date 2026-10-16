@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -11,6 +12,13 @@ const nextConfig: NextConfig = {
   // extension specifiers, which is what `moduleResolution: "bundler"` wants.
   // Next must compile them rather than treat them as pre-built node_modules.
   transpilePackages: ["@repo/core", "@repo/seed", "@repo/ui", "@repo/sdk"],
+
+  // The single most important line for deploying a Turborepo app to Vercel.
+  // Without it Next traces files relative to `apps/web`, so every `@repo/*`
+  // package (which lives outside this directory) drops out of the serverless
+  // function's file set. The build then fails with "Unable to find lambda for
+  // route: /api/health" and every route 404s in production.
+  outputFileTracingRoot: path.join(__dirname, "..", ".."),
 
   experimental: {
     optimizePackageImports: ["@repo/ui"],
