@@ -1,4 +1,4 @@
-# 0002 — epoch is the whole of the state
+# 0002 - epoch is the whole of the state
 
 Status: Accepted
 

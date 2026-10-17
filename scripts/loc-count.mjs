@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * loc-count.mjs — zero-dependency line-of-code counter for the amazing-repo scale engine.
+ * loc-count.mjs - zero-dependency line-of-code counter for the amazing-repo scale engine.
  *
  * Usage:
  *   node scripts/loc-count.mjs [rootDir] [--min-lines N] [--json]
@@ -226,7 +226,7 @@ if (jsonOut) {
 } else {
   const rows = [...agg.byExt].sort((a, b) => b[1].lines - a[1].lines);
   const w = Math.max(...rows.map(([e]) => e.length), 8);
-  console.log(`\n  LOC report — ${root}`);
+  console.log(`\n  LOC report - ${root}`);
   console.log(`  ${"ext".padEnd(w)}  ${"files".padStart(7)}  ${"lines".padStart(10)}`);
   console.log(`  ${"-".repeat(w)}  ${"-".repeat(7)}  ${"-".repeat(10)}`);
   for (const [ext, v] of rows) {

@@ -102,7 +102,7 @@ export class LuDecomposition {
     return det;
   }
 
-  /** Solves for every column of the identity — i.e. inverts the matrix. */
+  /** Solves for every column of the identity - i.e. inverts the matrix. */
   inverse(): number[][] {
     const out: number[][] = [];
     for (let j = 0; j < this.size; j++) {

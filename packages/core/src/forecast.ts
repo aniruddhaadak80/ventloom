@@ -4,7 +4,7 @@
  * A volcanic alert level is not a number, it is an argument: which indicators
  * moved, by how much, against which thresholds. This engine makes that argument
  * explicit. Every verdict carries the ordered list of rules that fired, the
- * observed values, and the thresholds they crossed — so a duty officer can
+ * observed values, and the thresholds they crossed - so a duty officer can
  * defend the call in a Situation Report instead of trusting a score.
  *
  * Levels follow the United States Geological Survey scheme
@@ -102,7 +102,7 @@ interface RuleSpec {
   /** Aviation colour this rule can raise the verdict to. */
   setsColour: AviationColourCode;
   advisory: string;
-  /** Indicator family — used to compute corroboration. */
+  /** Indicator family - used to compute corroboration. */
   family: "deformation" | "seismic" | "gas" | "thermal";
 }
 
@@ -134,7 +134,7 @@ export const ALERT_RULES: readonly RuleSpec[] = [
     severity: "extreme",
     // Deliberately not keyed on harmonicPeakCount: on the station noise model
     // only the fundamental of a tremor series clears the noise, so a partial
-    // count cannot carry a decision. The tremor band fraction can — it runs
+    // count cannot carry a decision. The tremor band fraction can - it runs
     // 0.72 for harmonic tremor against 0.04 for a quiet station.
     select: (i) => Math.min(i.rsamRatio * i.tremorBandFraction, i.deformationRateM3PerDay * 100),
     threshold: 8,
@@ -328,7 +328,7 @@ export function renderSituationReport(
   assessment: AlertAssessment,
 ): string {
   const lines: string[] = [
-    `SITUATION REPORT — ${volcanoName}`,
+    `SITUATION REPORT - ${volcanoName}`,
     `Alert level: ${assessment.volcanoAlertLevel} / ${assessment.aviationColourCode}`,
     `Confidence in the level: ${(assessment.confidence * 100).toFixed(0)}%`,
     "",
@@ -347,7 +347,7 @@ export function renderSituationReport(
     "Rules that fired",
   ];
   if (assessment.firedRules.length === 0) {
-    lines.push("  (none — background)");
+    lines.push("  (none - background)");
   } else {
     for (const rule of assessment.firedRules) {
       lines.push(

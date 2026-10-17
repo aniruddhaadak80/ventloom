@@ -51,8 +51,8 @@ flowchart TB
 ## Why a power-of-two length is mandatory
 
 The radix-2 butterfly decomposition needs `n = 2^k`. Rather than zero-pad
-silently — which would lengthen the window, smear a transient and change the
-frequency resolution the reader is looking at — `fft.ts` **throws**. A caller
+silently - which would lengthen the window, smear a transient and change the
+frequency resolution the reader is looking at - `fft.ts` **throws**. A caller
 who passes 1000 samples has made a modelling decision, not a typo, and the
 right response is to make them state it.
 
@@ -60,8 +60,8 @@ right response is to make them state it.
 
 A rectangular window convolves every tone with a sinc, whose sidelobes decay
 only as 1/f. A 1.5 Hz tremor tone would then leak energy into every bin out to
-Nyquist, and the 1-5 Hz band ratio — the number the alert engine actually
-consumes — would be contaminated by energy that is not there.
+Nyquist, and the 1-5 Hz band ratio - the number the alert engine actually
+consumes - would be contaminated by energy that is not there.
 
 Hann's sidelobes decay as 1/f³, at the cost of a wider main lobe and a coherent
 gain of exactly 0.5. That 0.5 is why the amplitude formula divides by the

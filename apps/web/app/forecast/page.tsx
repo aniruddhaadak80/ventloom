@@ -1,4 +1,4 @@
-﻿import { ALERT_RULES, assessUnrest, renderSituationReport, unrestIndicators } from "@repo/core";
+import { ALERT_RULES, assessUnrest, renderSituationReport, unrestIndicators } from "@repo/core";
 import { findVolcano, VOLCANO_CATALOGUE } from "@repo/seed";
 import {
   AlertBadge,
@@ -98,7 +98,7 @@ export default function ForecastPage({
                 label="Î”V"
                 value={`${(indicators.sourceVolumeChangeM3 / 1e6).toFixed(2)} MmÂ³`}
               />
-              <Stat label="RSAM ratio" value={indicators.rsamRatio.toFixed(2)} unit="Ã—" />
+              <Stat label="RSAM ratio" value={indicators.rsamRatio.toFixed(2)} unit="Ã-" />
               <Stat label="Tremor Hz" value={hertz(indicators.tremorHz)} />
               <Stat
                 label="Tremor band"

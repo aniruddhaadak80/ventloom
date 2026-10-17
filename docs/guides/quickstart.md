@@ -22,14 +22,14 @@ network at the default epoch (45 days).
 
 ## The paths worth clicking first
 
-1. `/geodesy?epoch=3888000&volcano=kilauea` — the Mogi inversion. Press
+1. `/geodesy?epoch=3888000&volcano=kilauea` - the Mogi inversion. Press
    "render" on the replay surface and watch the depth move.
-2. `/seismic?epoch=3888000&volcano=kilauea` — the radix-2 spectrogram and
+2. `/seismic?epoch=3888000&volcano=kilauea` - the radix-2 spectrogram and
    the 1.5 Hz harmonic.
-3. `/forecast?epoch=3888000&volcano=merapi` — the alert engine and its
+3. `/forecast?epoch=3888000&volcano=merapi` - the alert engine and its
    situation report.
-4. `/tephra` — the Aitchison distance matrix and the correlated layers.
-5. `/replay` — the time machine.
+4. `/tephra` - the Aitchison distance matrix and the correlated layers.
+5. `/replay` - the time machine.
 
 ## The non-negotiable URL habit
 

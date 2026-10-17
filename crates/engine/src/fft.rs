@@ -7,7 +7,7 @@
 //! two, which is far easier to notice than a subtly wrong spectrogram.
 //!
 //! The transform is iterative, in-place on a bit-reversed copy, and requires a
-//! power-of-two length — the same restriction the TypeScript implementation
+//! power-of-two length - the same restriction the TypeScript implementation
 //! imposes, so the two cannot silently diverge on edge cases.
 
 /// Why a transform could not run.
@@ -170,7 +170,7 @@ pub fn frequencies(n: usize, sample_rate_hz: f64) -> Vec<f64> {
 ///
 /// Bin resolution alone would quantise a 1.5 Hz harmonic to the nearest
 /// `sampleRate / n`, and at 60 s / 8192 samples that is 1.17 Hz of avoidable
-/// error — enough to move a signal across a band boundary.
+/// error - enough to move a signal across a band boundary.
 pub fn dominant_frequency(freqs: &[f64], powers: &[f64]) -> f64 {
     if powers.is_empty() {
         return 0.0;

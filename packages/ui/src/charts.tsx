@@ -2,8 +2,8 @@
  * Charts, drawn as inline SVG.
  *
  * No charting library. Every visual in the observatory is one of a small family
- * of shapes — sparkline, bar series, spectrogram heat map, displacement quiver,
- * waveform — and each of them is a pure function of numbers. That keeps the
+ * of shapes - sparkline, bar series, spectrogram heat map, displacement quiver,
+ * waveform - and each of them is a pure function of numbers. That keeps the
  * bundle small, the colours consistent, and the tests able to assert on
  * geometry rather than on pixels.
  */

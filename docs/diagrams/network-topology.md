@@ -71,7 +71,7 @@ there would be nothing on the map that was known not to be moving.
 
 It also serves a second purpose that is easy to overlook: the distal
 short-period station is the **noise reference**. Background seismic noise is
-not a constant — it is 1/f² below roughly 1.5 Hz and flat above, and it varies
+not a constant - it is 1/f² below roughly 1.5 Hz and flat above, and it varies
 by site. Measuring the RSAM ratio against a 30-day background *at the same
 station* is what makes "3x background" mean something. Comparing a flank
 station's raw amplitude against a different station's background would report

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * A real-input fast Fourier transform and the spectral features derived from it.
  *
  * This is the "is the ground humming" engine. A bit-exact radix-2 Cooleyâ€“Tukey

@@ -1,4 +1,4 @@
-//! `ventloom_engine` — the geodetic core, reimplemented in Rust.
+//! `ventloom_engine` - the geodetic core, reimplemented in Rust.
 //!
 //! Why a second implementation when `@repo/core` already does this in
 //! TypeScript? Because an inversion you can only run in one language is an
@@ -12,7 +12,7 @@
 //! * TypeScript (`packages/core`) is the product. It runs in the browser and
 //!   in Next.js route handlers, and it is what a reader sees.
 //! * Rust (`crates/engine`) is the check. It has no React, no HTTP, no seed
-//!   catalogue — just numbers in, numbers out, so it can be dropped into a
+//!   catalogue - just numbers in, numbers out, so it can be dropped into a
 //!   CI job, an `unsafe` FFI shim or a bench harness without dragging the
 //!   rest of the observatory with it.
 //!

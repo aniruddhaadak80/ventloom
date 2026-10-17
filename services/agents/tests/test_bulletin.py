@@ -45,9 +45,7 @@ def test_health_reports_the_rule_table_shape() -> None:
 
 def test_rule_table_is_ordered_and_unique() -> None:
     ids = [rule["id"] for rule in RULES]
-    assert ids == [f"R{i}" for i in range(1, 11)], (
-        "rules must be evaluated in a fixed order"
-    )
+    assert ids == [f"R{i}" for i in range(1, 11)], "rules must be evaluated in a fixed order"
     # Every advisory rule must precede the WARNING rules it supersedes, or a
     # later ADVISORY rule could fail to lower... which is why levels only rise.
     levels = [rule["sets_level"] for rule in RULES]
@@ -73,9 +71,7 @@ def test_background_volcano_is_normal() -> None:
 
 
 def test_one_family_scores_lower_than_three() -> None:
-    seismic_only = assess(
-        Indicators(rsam_ratio=6.0, tremor_band_fraction=0.8, tremor_hz=2.4)
-    )
+    seismic_only = assess(Indicators(rsam_ratio=6.0, tremor_band_fraction=0.8, tremor_hz=2.4))
     corroborated = assess(
         Indicators(
             rsam_ratio=6.0,
@@ -133,9 +129,7 @@ def test_case_ratio_threshold_is_exclusive_of_background() -> None:
 
 
 def test_situation_report_is_a_bounded_text_artifact() -> None:
-    indicators = Indicators(
-        rsam_ratio=4.5, tremor_band_fraction=0.62, so2_tonnes_per_day=900.0
-    )
+    indicators = Indicators(rsam_ratio=4.5, tremor_band_fraction=0.62, so2_tonnes_per_day=900.0)
     report = render_situation_report(
         "Kilauea", "United States", indicators, "2026-02-15T00:00:00.000Z"
     )

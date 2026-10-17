@@ -36,7 +36,7 @@ test.describe("landing", () => {
   });
 });
 
-test.describe("geodesy — the signature surface", () => {
+test.describe("geodesy - the signature surface", () => {
   test("inverts a deformation field and reports a converged source", async ({ page }) => {
     await page.goto("/geodesy?epoch=3888000&volcano=kilauea");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Mogi source inversion");
@@ -50,8 +50,8 @@ test.describe("geodesy — the signature surface", () => {
       .locator("xpath=ancestor::div[contains(@class,'grid')]")
       .first();
     await expect(depthRow).toContainText("m");
-    // The trade-off is reported honestly. It is negative by construction —
-    // a deeper source needs more volume to make the same surface displacement —
+    // The trade-off is reported honestly. It is negative by construction -
+    // a deeper source needs more volume to make the same surface displacement -
     // so the pattern has to admit a sign.
     await expect(page.getByText(/rho = -?\d\.\d+/)).toBeVisible();
   });
@@ -101,6 +101,147 @@ test.describe("geodesy — the signature surface", () => {
   });
 });
 
+/**
+ * The regression suite for two bugs a green build cannot see.
+ *
+ * Both shipped in a deployment that reported `Ready` and served every route.
+ */
+test.describe("observatory contract", () => {
+  test("only GNSS stations carry a displacement, and it is null elsewhere", async ({ page }) => {
+    const response = await page.request.get("/api/network?epoch=3888000");
+    expect(response.ok()).toBeTruthy();
+    const body = (await response.json()) as {
+      volcanoes: {
+        id: string;
+        stations: { instrument: string; displacement: unknown }[];
+        geodeticStations: { instrument: string; displacement: unknown }[];
+      }[];
+    };
+    for (const volcano of body.volcanoes) {
+      expect(volcano.stations.length).toBeGreaterThan(0);
+      for (const station of volcano.stations) {
+        if (station.instrument === "gnss") {
+          expect(station.displacement, `${volcano.id} gnss must carry a field`).not.toBeNull();
+        } else {
+          // A seismometer does not measure ground deformation. Reporting zeros
+          // here is what let the inversion fit a chamber to data that no
+          // chamber can produce.
+          expect(
+            station.displacement,
+            `${volcano.id} ${station.instrument} must not fabricate a field`,
+          ).toBeNull();
+        }
+      }
+      // The geodetic array is exactly the GNSS subset.
+      expect(volcano.geodeticStations.every((s) => s.instrument === "gnss")).toBe(true);
+      expect(volcano.geodeticStations.length).toBeGreaterThanOrEqual(
+        volcano.stations.filter((s) => s.instrument === "gnss").length,
+      );
+    }
+  });
+
+  test("a seismic station is rejected by the inversion instead of being fitted", async ({
+    page,
+  }) => {
+    const network = await page.request.get("/api/network?epoch=3888000").then((r) => r.json());
+    const kilauea = (
+      network as { volcanoes: { id: string; stations: unknown[] }[] }
+    ).volcanoes.find((v) => v.id === "kilauea");
+    const seismic = (kilauea?.stations ?? []).find(
+      (s) => (s as { instrument: string }).instrument !== "gnss",
+    );
+    test.skip(!seismic, "no non-geodetic station at this epoch");
+
+    const response = await page.request.post("/api/invert", {
+      data: {
+        stations: kilauea?.stations,
+        observations: (kilauea?.stations ?? []).map(
+          (s) => (s as { displacement: unknown }).displacement,
+        ),
+      },
+    });
+    expect(response.status()).toBe(400);
+    const body = (await response.json()) as { error: string };
+    expect(body.error).toContain("GNSS");
+  });
+
+  test("the published chamber inverts back to itself", async ({ page }) => {
+    // The central claim, end to end: the observatory publishes a source, and
+    // solving the observatory's own geodetic field recovers it. Before the
+    // null-displacement fix this recovered a chamber 60% shallower and still
+    // reported `converged: true`.
+    const network = await page.request.get("/api/network?epoch=3888000").then((r) => r.json());
+    const volcano = (
+      network as {
+        volcanoes: {
+          id: string;
+          source: {
+            depthM: number;
+            volumeChangeM3: number;
+            eastOffsetM: number;
+            northOffsetM: number;
+          };
+          geodeticStations: {
+            id: string;
+            eastOffsetM: number;
+            northOffsetM: number;
+            displacement: { eastM: number; northM: number; upM: number };
+          }[];
+        }[];
+      }
+    ).volcanoes.find((v) => v.id === "kilauea");
+    if (!volcano) throw new Error("kilauea missing from the network snapshot");
+
+    const response = await page.request.post("/api/invert", {
+      data: {
+        stations: volcano.geodeticStations,
+        observations: volcano.geodeticStations.map((s) => s.displacement),
+      },
+    });
+    expect(response.ok()).toBeTruthy();
+    const result = (await response.json()) as {
+      source: { depthM: number; volumeChangeM3: number };
+      diagnostics: { converged: boolean; rmsMisfitM: number };
+    };
+    expect(result.diagnostics.converged).toBe(true);
+    expect(
+      Math.abs(result.source.depthM - volcano.source.depthM) / volcano.source.depthM,
+    ).toBeLessThan(0.1);
+    expect(
+      Math.abs(result.source.volumeChangeM3 - volcano.source.volumeChangeM3) /
+        volcano.source.volumeChangeM3,
+    ).toBeLessThan(0.25);
+    expect(result.diagnostics.rmsMisfitM).toBeLessThan(1e-3);
+  });
+
+  test("an epoch past the seeded horizon is refused, not clamped", async ({ page }) => {
+    // These routes advertise `Cache-Control: immutable`. A clamping parser
+    // would hand the same bytes to two different cache keys, so the horizon has
+    // to be enforced rather than absorbed.
+    for (const path of ["/api/network", "/api/displacement?volcano=kilauea"]) {
+      const response = await page.request.get(
+        `${path}${path.includes("?") ? "&" : "?"}epoch=99999999999`,
+      );
+      expect(response.status(), `${path} must reject an absurd epoch`).toBe(400);
+    }
+    for (const value of ["-1", "1.5", "1e3", "abc"]) {
+      const response = await page.request.get(`/api/network?epoch=${encodeURIComponent(value)}`);
+      expect(response.status(), `epoch=${value} must be refused`).toBe(400);
+    }
+    // The boundary itself is legal.
+    const horizon = await page.request.get("/api/network?epoch=31536000");
+    expect(horizon.ok()).toBeTruthy();
+  });
+
+  test("the same URL returns the same bytes", async ({ page }) => {
+    const [a, b] = await Promise.all([
+      page.request.get("/api/network?epoch=7776000"),
+      page.request.get("/api/network?epoch=7776000"),
+    ]);
+    expect(await a.text()).toBe(await b.text());
+  });
+});
+
 test.describe("seismic", () => {
   test("renders a spectrogram and reports the tremor band fraction", async ({ page }) => {
     await page.goto("/seismic?epoch=3888000&volcano=kilauea");
@@ -143,7 +284,7 @@ test.describe("forecast", () => {
   });
 });
 
-test.describe("replay — the deterministic time machine", () => {
+test.describe("replay - the deterministic time machine", () => {
   test("the same epoch renders the same observatory", async ({ page }) => {
     await page.goto("/replay?epoch=2592000&volcano=kilauea");
     const first = await page.locator("main").innerText();

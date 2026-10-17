@@ -77,6 +77,6 @@ between a solver that converges and one that stalls on its first step.
 The Mogi model has a genuine degeneracy: as `d → ∞` with `ΔV ∝ d³`, the surface
 field is unchanged. An unbounded solver will happily walk toward infinity along
 that ridge and report a deep, enormous source with an excellent misfit. The
-bounds do not hide that degeneracy — the correlation matrix reports it — they
+bounds do not hide that degeneracy - the correlation matrix reports it - they
 just stop the optimiser from leaving the region where the point-source
 approximation means anything.

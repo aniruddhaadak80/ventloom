@@ -83,7 +83,7 @@ pub fn solve_linear(a: &[impl AsRef<[f64]>], b: &[f64]) -> Result<Vec<f64>, Matr
         let inv = 1.0 / m[col][col];
         // The inner loop indexes two different rows of `m` at once, so it
         // cannot be expressed as a single iterator without zip-walking two
-        // mutable borrows — which Rust rejects. The range loop is the honest
+        // mutable borrows - which Rust rejects. The range loop is the honest
         // form here.
         #[allow(clippy::needless_range_loop)]
         for row in col + 1..n {

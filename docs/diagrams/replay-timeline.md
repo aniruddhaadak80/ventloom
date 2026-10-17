@@ -65,7 +65,7 @@ timestamp, and it is a pure conversion.
 Scrubbing an epoch is a continuous gesture, and a full page navigation per
 position would make the control unusable. The replay surface updates the query
 string with `history.replaceState` as you drag, so the URL always reflects what
-is on screen and the back button still works — while every panel recomputes from
+is on screen and the back button still works - while every panel recomputes from
 the same pure functions the server rendered.
 
 ## The honest limitation

@@ -7,7 +7,7 @@ import { describeEpoch, readEpoch } from "../lib/epoch";
 import { rate, volume } from "../lib/format";
 
 export const metadata: Metadata = {
-  title: "ventloom — weave volcanic signals into an eruption forecast",
+  title: "ventloom - weave volcanic signals into an eruption forecast",
   description:
     "A deterministic volcano observatory over a seeded synthetic network, with a real Mogi geodetic inversion and an auditable alert-level engine.",
 };
@@ -99,8 +99,8 @@ export default function ObservatoryPage({
         <div className="grid content-start gap-4">
           <Panel title="Seed world" subtitle="Determinism is the product.">
             <p className="text-xs leading-relaxed text-[var(--color-ash-muted)]">
-              Twelve real volcanoes with their real coordinates and elevations. Everything else —
-              the chamber geometry, the tremor mechanism, the gas ratios — is synthesised from
+              Twelve real volcanoes with their real coordinates and elevations. Everything else -
+              the chamber geometry, the tremor mechanism, the gas ratios - is synthesised from
               integer seed 7331 by{" "}
               <code className="font-[family-name:var(--font-mono)] text-[11px] text-[var(--color-seismic)]">
                 mulberry32

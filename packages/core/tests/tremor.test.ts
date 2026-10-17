@@ -200,8 +200,8 @@ describe("classifyTremor", () => {
       31,
     );
     const result = classifyTremor(trace, SAMPLE_RATE, 31);
-    // Two quiescent-like mechanisms exist — quiescent and teleseism are both
-    // low-amplitude, low-flatness, non-tonal traces — so the honest assertion is
+    // Two quiescent-like mechanisms exist - quiescent and teleseism are both
+    // low-amplitude, low-flatness, non-tonal traces - so the honest assertion is
     // that the classifier refuses to call it tremor.
     expect(["quiescent", "teleseism"]).toContain(result.label);
   });

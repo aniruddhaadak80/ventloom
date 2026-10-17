@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "ventloom — weave volcanic signals into an eruption forecast",
+    default: "ventloom - weave volcanic signals into an eruption forecast",
     template: "%s · ventloom",
   },
   description:
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "ventloom",
-    title: "ventloom — weave volcanic signals into an eruption forecast",
+    title: "ventloom - weave volcanic signals into an eruption forecast",
     description:
       "A deterministic volcano observatory with a real Mogi geodetic inversion and an auditable alert-level engine. No API keys, no network.",
   },

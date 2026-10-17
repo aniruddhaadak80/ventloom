@@ -27,16 +27,38 @@ export interface ObservatoryClientOptions {
   fetchImpl?: typeof fetch;
 }
 
+/**
+ * One station as `GET /api/network` reports it.
+ *
+ * `displacement` is `null` for every instrument that does not measure ground
+ * deformation. A seismometer and a GNSS both have coordinates; only one of them
+ * has a displacement. `null` says which.
+ */
 export interface StationObservation {
+  id: string;
   code: string;
   instrument: string;
-  displacement: Displacement;
+  eastOffsetM: number;
+  northOffsetM: number;
+  elevationM: number;
+  displacement: Displacement | null;
   traceSamples: number;
+}
+
+/** A station that definitely carries a deformation field. */
+export interface GeodeticStation extends Omit<StationObservation, "displacement"> {
+  displacement: Displacement;
 }
 
 export interface NetworkVolcano {
   id: string;
   name: string;
+  country: string;
+  latitudeDeg: number;
+  longitudeDeg: number;
+  elevationM: number;
+  volcanoType: string;
+  unrestProfile: string;
   unrest: number;
   tremorLabel: string;
   source: MogiSource;
@@ -47,13 +69,21 @@ export interface NetworkVolcano {
     confidence: number;
     advisories: string[];
   };
+  /** Every station watching this volcano, geodetic and non-geodetic alike. */
   stations: StationObservation[];
+  /**
+   * The GNSS subset, in exactly the shape `POST /api/invert` accepts. Use this
+   * rather than `stations`: forwarding the whole array gets a 400 that names
+   * the offending stations, which is better than a plausible wrong chamber.
+   */
+  geodeticStations: GeodeticStation[];
 }
 
 export interface NetworkSnapshotResponse {
   epochS: number;
   timestampIso: string;
   maxEpochS: number;
+  seed: number;
   volcanoes: NetworkVolcano[];
 }
 
@@ -155,7 +185,8 @@ export class ObservatoryClient {
    * Convenience: fetch a volcano's field and invert it in one call.
    *
    * Useful for a notebook or a script that wants the answer without thinking
-   * about the two-step protocol.
+   * about the two-step protocol. `GET /api/displacement` only ever reports GNSS
+   * sites, so this is safe to call with the full network.
    */
   async invertVolcano(params: { volcano: string; epochS?: number; sigmaM?: number }) {
     const field = await this.displacement(params);
@@ -165,12 +196,60 @@ export class ObservatoryClient {
       sigmaM: params.sigmaM ?? 0.004,
     });
   }
+
+  /**
+   * The geodetic field for one volcano, lifted out of the network snapshot.
+   *
+   * `GET /api/network` reports every instrument watching a volcano, and only
+   * the GNSS subset carries a displacement. This is the method that hands back
+   * only the stations an inversion may legitimately use, so the caller cannot
+   * accidentally fit a seismometer's zero vector.
+   */
+  async geodeticField(params: {
+    volcano: string;
+    epochS?: number;
+  }): Promise<{ stations: GeodeticStation[]; observations: Displacement[]; source: MogiSource }> {
+    const snapshot = await this.network(
+      params.epochS === undefined ? {} : { epochS: params.epochS },
+    );
+    const volcano = snapshot.volcanoes.find((v) => v.id === params.volcano);
+    if (!volcano) {
+      throw new Error(`unknown volcano "${params.volcano}"`);
+    }
+    const stations = volcano.geodeticStations ?? [];
+    return {
+      stations,
+      observations: stations.map((s) => s.displacement),
+      source: volcano.source,
+    };
+  }
+
+  /**
+   * Invert the network snapshot's own geodetic field for one volcano.
+   *
+   * The honest round trip: the observatory publishes a chamber, the observatory
+   * solves for it back, and the two agree. Any drift between the forward model
+   * and the solver shows up here rather than in a downstream analysis.
+   */
+  async invertFromNetwork(params: {
+    volcano: string;
+    epochS?: number;
+    sigmaM?: number;
+  }): Promise<MogiInversionResult & { truth: MogiSource }> {
+    const field = await this.geodeticField(params);
+    const result = await this.invert({
+      stations: field.stations,
+      observations: field.observations,
+      sigmaM: params.sigmaM ?? 0.004,
+    });
+    return { ...result, truth: field.source };
+  }
 }
 
 /**
  * The same inversion, computed locally from `@repo/core` with no HTTP at all.
  *
- * Exposed so a caller can verify the server against the client-side model —
+ * Exposed so a caller can verify the server against the client-side model -
  * the two are the same code, which is the point of shipping the core as a
  * workspace dependency.
  */

@@ -1,7 +1,7 @@
 /**
  * Tephra geochemistry seed world.
  *
- * Three end-member compositions — rhyolitic, andesitic, basaltic — plus a set of
+ * Three end-member compositions - rhyolitic, andesitic, basaltic - plus a set of
  * recovered layers in four cores. Layers are drawn from an end member and then
  * perturbed with a seeded, small, closed perturbation, which reproduces the two
  * properties that make real tephra correlation hard: two layers from the same
@@ -113,7 +113,7 @@ export const END_MEMBER_LIST = END_MEMBERS;
  *
  * Perturbations are multiplicative and then re-closed to 100 %, so a layer
  * never drifts off the simplex. The magnitude is drawn from a log-normal
- * distribution scaled by `scatter` — a couple of percent for proximal cores,
+ * distribution scaled by `scatter` - a couple of percent for proximal cores,
  * more for distal ones where the fine fraction is enriched in SiO₂.
  */
 export function perturbComposition(base: Composition, scatter: number, seed: number): Composition {

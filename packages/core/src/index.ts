@@ -1,5 +1,5 @@
 /**
- * `@repo/core` — the ventloom domain core.
+ * `@repo/core` - the ventloom domain core.
  *
  * Pure functions over primitive types. No React, no framework, no I/O, no
  * clock, no randomness beyond the explicit seeded PRNG. Everything the app

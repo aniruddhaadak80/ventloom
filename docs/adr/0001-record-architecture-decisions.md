@@ -1,4 +1,4 @@
-# 0001 — Record architecture decisions as numbered files
+# 0001 - Record architecture decisions as numbered files
 
 Date: 2026-04-14
 Status: Accepted
@@ -16,9 +16,9 @@ to these is either folklore or lost.
 Architecture decisions are recorded as short, immutable, numbered files in
 `docs/adr/`, following Michael Nygard's lightweight template:
 
-- `## Context` — what situation made the decision necessary,
-- `## Decision` — what was decided, in the imperative,
-- `## Consequences` — what follows, including the costs.
+- `## Context` - what situation made the decision necessary,
+- `## Decision` - what was decided, in the imperative,
+- `## Consequences` - what follows, including the costs.
 
 ## Consequences
 
@@ -30,8 +30,8 @@ Architecture decisions are recorded as short, immutable, numbered files in
 
 ## Index
 
-- 0001 — Record architecture decisions
-- 0002 — epoch is the whole state
-- 0003 — Rust exists as a parity oracle
-- 0004 — no wall clock anywhere
-- 0005 — Aitchison, not Euclidean, for tephra
+- 0001 - Record architecture decisions
+- 0002 - epoch is the whole state
+- 0003 - Rust exists as a parity oracle
+- 0004 - no wall clock anywhere
+- 0005 - Aitchison, not Euclidean, for tephra

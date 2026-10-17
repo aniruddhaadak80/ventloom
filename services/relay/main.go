@@ -8,7 +8,7 @@
 // does exactly that and nothing more: it polls the observatory's own JSON API,
 // keeps a bounded ring buffer per station, and exposes three read-only
 // endpoints. It has no database, no state on disk and no configuration file,
-// so it can be restarted at any moment without losing anything that matters —
+// so it can be restarted at any moment without losing anything that matters -
 // the world is a pure function, and the buffer is a cache of it.
 //
 // Deliberate properties:

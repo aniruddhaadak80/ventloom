@@ -29,7 +29,7 @@ bun scripts/gen-assets.mjs --check
 ```
 
 If you can run them locally, you should. The CI runner has a network, but
-your laptop does not always — a change that works offline is a change that is
+your laptop does not always - a change that works offline is a change that is
 testable.
 
 ## Cross-language changes
@@ -66,7 +66,7 @@ feature is also its documenter.
   documentation, and sentences that only repeat the code are noise.
 - Determinism is a design constraint, not a preference. No `Math.random`, no
   `Date.now`, no `process.env` reads outside the documented entry points.
-- `force-static` on any route that reads a query parameter is forbidden — see
+- `force-static` on any route that reads a query parameter is forbidden - see
   the comment in `app/api/displacement/route.ts`.
 
 ## Getting help

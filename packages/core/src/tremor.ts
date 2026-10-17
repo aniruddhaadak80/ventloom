@@ -3,8 +3,8 @@
  *
  * Real-time seismic amplitude (RSAM) and spectral shape are the two most-used
  * volcano-seismology discriminators. This module generates deterministic
- * synthetic traces by physical mechanism — harmonic tremor, volcano-tectonic
- * bursts, rockfall, teleseisms — and then measures them with the same features
+ * synthetic traces by physical mechanism - harmonic tremor, volcano-tectonic
+ * bursts, rockfall, teleseisms - and then measures them with the same features
  * an observatory would, so the classifier is never inventing signal.
  */
 
@@ -26,7 +26,7 @@ import { hashSeed, mulberry32 } from "./rng.js";
 /**
  * Margin, in dB, that a spectral peak must clear above its local background to
  * count as a resolved tone. Matched to the measured statistics of the station
- * background noise — see `countSpectralPeaks`.
+ * background noise - see `countSpectralPeaks`.
  */
 export const HARMONIC_PEAK_MARGIN_DB = 20;
 
@@ -184,13 +184,13 @@ export function synthesizeTremor(config: TremorConfig, seed: number): Float64Arr
   const out = new Float64Array(n);
   const rng = mulberry32(seed);
 
-  // 1/f^β shaped background — the standing "ground noise" floor of any station.
+  // 1/f^β shaped background - the standing "ground noise" floor of any station.
   //
   // Shaped in the frequency domain rather than by cascaded one-pole filters: a
   // filter cascade can only approximate the slope over a limited band, and what
   // survives above the highest corner is nearly white. Real seismic background
   // noise is strongly red, and the tremor's separability depends on it being
-  // correctly modelled — with white noise the background's own centroid lands
+  // correctly modelled - with white noise the background's own centroid lands
   // in the 1-5 Hz band and buries the signal it is supposed to sit under.
   const background = shapeNoisePink(n, NOISE_SPECTRAL_EXPONENT, rng, {
     cornerHz: NOISE_CORNER_HZ,
@@ -287,7 +287,7 @@ export function synthesizeTremor(config: TremorConfig, seed: number): Float64Arr
     }
   }
 
-  // Sensor saturation clip — a real three-component seismometer clips too.
+  // Sensor saturation clip - a real three-component seismometer clips too.
   const ceiling = baseAmplitude * 12;
   for (let i = 0; i < n; i++) {
     out[i] = Math.max(-ceiling, Math.min(ceiling, out[i] as number));
@@ -367,7 +367,7 @@ export function windowDominantHz(signal: TraceInput, sampleRateHz: number): numb
  * Chooses the mechanism label whose measured features best match an observed
  * trace.
  *
- * Scoring runs on *shape* features only — spectral flatness, crest factor, band
+ * Scoring runs on *shape* features only - spectral flatness, crest factor, band
  * fractions and resolved peak count. Amplitude is deliberately excluded: the
  * candidate traces are synthesised at an arbitrary unit amplitude, so an
  * amplitude term would dominate the score with nothing but the mismatch in

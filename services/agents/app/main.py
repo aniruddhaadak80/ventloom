@@ -293,9 +293,9 @@ def assess(indicators: Indicators) -> Assessment:
     for rule in RULES:
         value = float(values[rule["indicator"]])
         if _compare(value, rule["comparison"], rule["threshold"]):
-            if _LEVEL_RANK[rule["sets_level"]] > _LEVEL_RANK[level]:  # type: ignore[index]
+            if _LEVEL_RANK[rule["sets_level"]] > _LEVEL_RANK[level]:
                 level = rule["sets_level"]
-            if _COLOUR_RANK[rule["sets_colour"]] > _COLOUR_RANK[colour]:  # type: ignore[index]
+            if _COLOUR_RANK[rule["sets_colour"]] > _COLOUR_RANK[colour]:
                 colour = rule["sets_colour"]
             families_seen.add(rule["family"])
             fired.append(

@@ -1,4 +1,4 @@
-﻿import {
+import {
   type Displacement,
   hashSeed,
   type MogiSource,

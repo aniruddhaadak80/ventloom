@@ -1,4 +1,4 @@
-﻿import { SECONDS_PER_DAY, unrestIndex, unrestIndicators } from "@repo/core";
+import { SECONDS_PER_DAY, unrestIndex, unrestIndicators } from "@repo/core";
 import { findVolcano, VOLCANO_CATALOGUE } from "@repo/seed";
 import { Panel, Sparkline, Stat, StatGrid } from "@repo/ui";
 import type { Metadata } from "next";
@@ -120,7 +120,7 @@ export default function ReplayPage({
             />
           </div>
           <p className="mt-2 font-[family-name:var(--font-mono)] text-xs tabular-nums text-[var(--color-seismic)]">
-            now {current.rsamRatio.toFixed(2)}Ã—
+            now {current.rsamRatio.toFixed(2)}Ã-
           </p>
         </Panel>
         <Panel title="Source volume, last 60 days" subtitle="Negative is deflation.">
@@ -175,7 +175,7 @@ export default function ReplayPage({
                   </a>
                   <span className="font-[family-name:var(--font-mono)] text-[11px] tabular-nums text-[var(--color-ash-dim)]">
                     u {unrestIndex(v, epochS).toFixed(3)} Â· rsam {indicators.rsamRatio.toFixed(2)}
-                    Ã—
+                    Ã-
                   </span>
                 </li>
               );

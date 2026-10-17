@@ -72,7 +72,7 @@ export function stationsFor(volcanoId: string): StationRecord[] {
   return STATION_NETWORK.filter((station) => station.volcanoId === volcanoId);
 }
 
-/** Every GNSS station belonging to one volcano — the inversion's input. */
+/** Every GNSS station belonging to one volcano - the inversion's input. */
 export function gnssStationsFor(volcanoId: string): StationRecord[] {
   return stationsFor(volcanoId).filter((station) => station.instrument === "gnss");
 }

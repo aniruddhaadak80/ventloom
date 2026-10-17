@@ -55,4 +55,4 @@ backported; the supported release is always the tip of `main`.
 ## No bug bounty
 
 This is a personal project and carries no reward program. Please report
-anyway — responsible disclosure is appreciated regardless.
+anyway - responsible disclosure is appreciated regardless.

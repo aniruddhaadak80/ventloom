@@ -4,7 +4,7 @@
  * Coordinates, elevations and types are taken from public volcano references
  * (Smithsonian Global Volcanism Program "Volcanoes of the World", national
  * observatory pages). The unrest profile and the monitoring network are
- * ventloom's own synthetic construction — nothing here is a live feed. The
+ * ventloom's own synthetic construction - nothing here is a live feed. The
  * catalogue exists so the demo runs against recognisable, real geography while
  * every number the app shows is deterministic and offline.
  */

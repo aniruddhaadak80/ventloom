@@ -1,4 +1,4 @@
-# 0003 — Rust exists as a parity oracle
+# 0003 - Rust exists as a parity oracle
 
 Status: Accepted
 

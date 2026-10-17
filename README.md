@@ -158,7 +158,7 @@ covers the canonical Vercel path).
 
 ## License
 
-[MIT](LICENSE) — © 2026 Aniruddha Adak.
+[MIT](LICENSE) - © 2026 Aniruddha Adak.
 
 ## The seed
 

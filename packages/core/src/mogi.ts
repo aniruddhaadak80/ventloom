@@ -23,7 +23,7 @@
  *     source than vertical displacement `w`, which decays as `1/R³`. A network
  *     of GPS benches therefore constrains the source position far better than
  *     levelling alone.
- *  2. Only the ratio `ΔV/d³` is resolvable from a single epoch — depth and
+ *  2. Only the ratio `ΔV/d³` is resolvable from a single epoch - depth and
  *     volume are strongly correlated, and the inversion reports that
  *     correlation honestly rather than pretending to separate them.
  *
@@ -32,8 +32,8 @@
  * Earthquake Research Institute 36, 99–134. See `docs/adr/0003-mogi-formulation.md`.
  *
  * The formulation here is validated against the 1914 Taishō Sakurajima
- * case — Omori's levelling data, `d = 10 km`, `a = 2.5 km`, `ΔP = -400 MPa`,
- * `G = 30 GPa`, `ν = 0.25` — which reproduces `w_max = -1.5625 m` at the
+ * case - Omori's levelling data, `d = 10 km`, `a = 2.5 km`, `ΔP = -400 MPa`,
+ * `G = 30 GPa`, `ν = 0.25` - which reproduces `w_max = -1.5625 m` at the
  * epicentre and a deflation volume of `0.98 km³`.
  */
 
@@ -146,7 +146,7 @@ export function mogiForward(
  * Derived by differentiating `C · (s − e) R⁻³` in each parameter. Note that the
  * first two parameters are the *source* position, so those two columns carry
  * the opposite sign to the naive ∂/∂(station) form. Exact, so no step-size
- * tuning and no finite-difference bias in the solved depth — finite differences
+ * tuning and no finite-difference bias in the solved depth - finite differences
  * would put a floor on the achievable precision at the ~1e-6 m scale that GPS
  * data actually reaches.
  */

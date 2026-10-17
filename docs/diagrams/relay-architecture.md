@@ -92,7 +92,7 @@ The relay's `/status` reports how old its reading is. A cache in front of the
 observatory that silently substituted a 30-minute-old body for the fresh one
 would make that number a lie, and a lie about currency is the one failure
 mode that cannot be seen in the data. The observatory itself is safe to
-cache — it is a pure function — but the thing that *reads* it for duty staff
+cache - it is a pure function - but the thing that *reads* it for duty staff
 is not, because a stale reading presented as current is the exact failure
 that alert systems exist to prevent.
 

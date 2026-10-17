@@ -40,7 +40,7 @@ w(r) = C · d / (r² + d²)^(3/2)        where C = ΔV(1 − ν)/π
 ```
 
 Substitute `d → kd` and `ΔV → k³ΔV`. The factor is `k³·d / (r² + k²d²)^(3/2)`,
-which is **not** exactly invariant — but over the range of `r` a real network
+which is **not** exactly invariant - but over the range of `r` a real network
 covers, it is invariant to within the noise floor for `k` between about 0.7 and
 1.4. That near-degeneracy is the ridge. Its signature in the output is a
 depth-volume correlation coefficient near −1, and the geodesy page prints that

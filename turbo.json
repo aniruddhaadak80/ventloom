@@ -1,6 +1,24 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
+  "globalEnv": [
+    "CI",
+    "VERCEL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "VERCEL_GIT_COMMIT_SHA",
+    "VERCEL_GIT_COMMIT_REF",
+    "VERCEL_GIT_COMMIT_REPO",
+    "VERCEL_GIT_PREVIOUS_SHA",
+    "VERCEL_GIT_REPO_OWNER",
+    "VERCEL_GIT_REPO_SLUG"
+  ],
+  "globalPassThroughEnv": [
+    "VENTLOOM_URL",
+    "PLAYWRIGHT_HOST",
+    "PLAYWRIGHT_PORT",
+    "PLAYWRIGHT_SERVER_DEBUG"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [

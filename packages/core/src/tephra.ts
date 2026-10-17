@@ -4,7 +4,7 @@
  * Tephra layers are correlated between ice cores, sediment cores and soil
  * profiles by their major-oxide chemistry, and each correlation is a
  * compositional-data problem: oxides are parts of a whole that sum to 100 %,
- * so Euclidean distance on raw wt% is wrong — a rise in SiO₂ must drag every
+ * so Euclidean distance on raw wt% is wrong - a rise in SiO₂ must drag every
  * other oxide down. ventloom therefore works in the Aitchison geometry and
  * measures genuine distances on the simplex.
  *
@@ -118,7 +118,7 @@ export function clrTransform(composition: Composition): number[] {
   return logs.map((l) => l - mean);
 }
 
-/** Euclidean norm of the CLR difference — the Aitchison distance. */
+/** Euclidean norm of the CLR difference - the Aitchison distance. */
 export function aitchisonDistance(a: Composition, b: Composition): number {
   const ca = clrTransform(a);
   const cb = clrTransform(b);
@@ -163,7 +163,7 @@ export interface CorrelationGroup {
  * Single-linkage clustering of tephra layers by composition.
  *
  * Single linkage is chosen over complete or Ward because a tephra layer can
- * split into two sub-facies — a coarse proximal lens and a fine distal drape —
+ * split into two sub-facies - a coarse proximal lens and a fine distal drape -
  * that must still group; single linkage never splits a continuous unit.
  */
 export function clusterTephra(
@@ -319,7 +319,7 @@ export function pyleVolumeNumeric(isopachs: readonly Isopach[]): number {
   return volume;
 }
 
-/** Cosine similarity between two compositions — used as a secondary ranking. */
+/** Cosine similarity between two compositions - used as a secondary ranking. */
 export function compositionSimilarity(a: Composition, b: Composition): number {
   const closed = closeComposition(a);
   const other = closeComposition(b);

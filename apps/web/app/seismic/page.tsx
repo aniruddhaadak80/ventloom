@@ -1,4 +1,4 @@
-﻿import {
+import {
   amplitudeSpectrum,
   SAMPLE_RATE_HZ,
   spectrogram,

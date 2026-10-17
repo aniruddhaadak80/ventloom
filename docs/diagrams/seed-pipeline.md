@@ -69,8 +69,8 @@ without touching the geochemistry stream, and both stay reproducible.
 
 ## Why `mulberry32`
 
-It is four lines, has a 2<sup>32</sup>-1 period, and — the property that
-matters here — is trivially reimplementable in Rust and Python. A cross-language
+It is four lines, has a 2<sup>32</sup>-1 period, and - the property that
+matters here - is trivially reimplementable in Rust and Python. A cross-language
 parity test is only meaningful if all three implementations can be *provably*
 drawing from the same sequence, and a well-specified 32-bit integer hash is the
 only kind of generator for which that is true. A PCG or xoshiro would also

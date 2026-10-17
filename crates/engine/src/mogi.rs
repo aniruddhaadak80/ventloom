@@ -1,4 +1,4 @@
-﻿//! The Mogi (1958) point-source model and its Levenbergâ€“Marquardt inversion.
+//! The Mogi (1958) point-source model and its Levenbergâ€“Marquardt inversion.
 //!
 //! A small pressurised sphere in a homogeneous isotropic elastic half-space,
 //! expressed in volume change rather than pressure so the recovered parameter
@@ -125,7 +125,7 @@ pub struct Fit {
     pub termination_reason: String,
     /// One-sigma uncertainty per parameter, in each parameter's own unit.
     pub parameter_sigmas: [f64; 4],
-    /// Correlation matrix of the four parameters, row-major 4Ã—4.
+    /// Correlation matrix of the four parameters, row-major 4Ã-4.
     pub parameter_correlations: [[f64; 4]; 4],
     /// Correlation between depth and volume change: the trade-off a
     /// single-epoch geodetic inversion cannot resolve.
@@ -171,7 +171,7 @@ pub fn mogi_forward(stations: &[Station], source: &Source, poisson: f64) -> Vec<
         .collect()
 }
 
-/// Analytic Jacobian: `âˆ‚(u, w)/âˆ‚(s, f, d, Î”V)`, row-major `3n Ã— 4`.
+/// Analytic Jacobian: `âˆ‚(u, w)/âˆ‚(s, f, d, Î”V)`, row-major `3n Ã- 4`.
 ///
 /// Written out by hand rather than by finite difference. A centred difference
 /// on a 4 mm noise floor would bury the derivative in that same noise and the

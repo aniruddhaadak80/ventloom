@@ -1,8 +1,8 @@
 /**
  * Deterministic pseudo-random number generation.
  *
- * Every synthetic signal in ventloom — tremor traces, geodetic noise, tephra
- * chemistry — is a pure function of an integer seed. Run the same seed twice
+ * Every synthetic signal in ventloom - tremor traces, geodetic noise, tephra
+ * chemistry - is a pure function of an integer seed. Run the same seed twice
  * and the observatory is bit-identical, which is what makes the demos, the
  * test suite and CI agree.
  */
@@ -28,7 +28,7 @@ export interface Rng {
 }
 
 /**
- * mulberry32 — a fast, well-distributed 32-bit PRNG.
+ * mulberry32 - a fast, well-distributed 32-bit PRNG.
  *
  * Chosen over a full `sfmt`/`xoshiro` implementation because it is small,
  * passes the PractRand suites comfortably at the sizes ventloom needs
@@ -95,7 +95,7 @@ export function mulberry32(seed: number): Rng {
 /**
  * Hashes an arbitrary string into a 32-bit seed (FNV-1a).
  *
- * Lets any named entity — a station id, a volcano slug — own a stable,
+ * Lets any named entity - a station id, a volcano slug - own a stable,
  * independent random stream without a lookup table.
  */
 export function hashSeed(text: string): number {

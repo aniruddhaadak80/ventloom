@@ -79,7 +79,7 @@ background noise puts almost none there.
 A harmonic tremor's fundamental sits near 1.5 Hz. At 16 Hz sampling over 60
 seconds, bin spacing is 0.056 Hz, which resolves 1.5 Hz comfortably in
 principle. In practice the fundamental is the *weakest* member of the series
-— conduit resonance radiates more efficiently at its overtones — so it often
+- conduit resonance radiates more efficiently at its overtones - so it often
 sits within a few dB of the noise floor while the 3 Hz and 4.5 Hz harmonics
 are unmistakable. The classifier therefore treats a missing fundamental as
 weak evidence rather than as disproof, which is why the harmonic series test

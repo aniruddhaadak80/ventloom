@@ -80,8 +80,8 @@ The table is evaluated in order and each firing can only *raise* the level.
 Two reasons. Operationally, an observatory that oscillates between WATCH and
 ADVISORY as a single indicator wanders across a threshold generates alarm
 fatigue, which is how people stop reading bulletins. Formally, the thresholds
-are not a partition of indicator space — R1 and R7 both test the deformation
-rate, at different levels — so the natural reading of "the last rule that
+are not a partition of indicator space - R1 and R7 both test the deformation
+rate, at different levels - so the natural reading of "the last rule that
 fired" would give a *lower* answer for a more severe signal.
 
 ## The CO2/SO2 rule fires downward

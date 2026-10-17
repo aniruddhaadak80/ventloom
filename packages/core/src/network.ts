@@ -4,7 +4,7 @@
  * Everything here is a pure function of `(volcano, epoch)`. There is no clock,
  * no mutable state and no network call: ask for epoch 0 and epoch 86400 and you
  * always get the same two answers. That is what makes the time-machine replay
- * surface honest — scrubbing backwards shows exactly what the "instrument" would
+ * surface honest - scrubbing backwards shows exactly what the "instrument" would
  * have recorded, not a re-roll of the dice.
  *
  * The unrest curve of each volcano is a sum of a few sinusoids whose phases come
@@ -66,7 +66,7 @@ export interface StationRecord {
   readonly eastOffsetM: number;
   readonly northOffsetM: number;
   readonly elevationM: number;
-  /** Sensor type — decides which channels it reports. */
+  /** Sensor type - decides which channels it reports. */
   readonly instrument:
     | "broadband-seismic"
     | "short-period-seismic"

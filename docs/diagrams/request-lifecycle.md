@@ -69,5 +69,5 @@ than leaving a client to guess at a `max-age`.
 
 Note the trap this avoids: these handlers are `force-dynamic`, not
 `force-static`. A parameterised route marked `force-static` is evaluated once
-at build time with an empty query string and its response — often a 400 — is
+at build time with an empty query string and its response - often a 400 - is
 baked into the build output.

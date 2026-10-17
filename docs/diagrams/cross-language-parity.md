@@ -40,7 +40,7 @@ flowchart TB
 
 An inversion that only exists in one language is an inversion that cannot be
 cross-checked. If `mogi.ts` has an algebra slip in its Jacobian, every test in
-the repo passes — the tests assert against the same formulas, so a consistent
+the repo passes - the tests assert against the same formulas, so a consistent
 error is invisible. Reimplementing the same closed forms in Rust from the
 documentation, without looking at the TypeScript, produces a second opinion
 that disagrees whenever the first is wrong.
@@ -52,9 +52,9 @@ the output. It was found by a parity assertion, not by reading the code.
 
 ## What is NOT cross-checked
 
-The FFT is verified in Rust against known analytic properties — a pure tone
+The FFT is verified in Rust against known analytic properties - a pure tone
 recovered to sub-bin accuracy, unit amplitude preserved through the window
-correction, an exact bin-centred tone showing no leakage — rather than against
+correction, an exact bin-centred tone showing no leakage - rather than against
 the TypeScript output. That is a weaker guarantee, and it is deliberate: the
 two implementations agree on bin ordering, normalisation and windowing, so a
 numeric diff would be dominated by round-off ordering rather than by

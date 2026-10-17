@@ -1,4 +1,4 @@
-﻿import {
+import {
   aitchisonDistance,
   type Composition,
   clrTransform,

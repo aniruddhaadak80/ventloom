@@ -1,7 +1,7 @@
-﻿import { mogiForward, volcanoSource } from "@repo/core";
+import { mogiForward, volcanoSource } from "@repo/core";
 import { findVolcano, gnssStationsFor } from "@repo/seed";
 import { NextResponse } from "next/server";
-import { readEpoch } from "../../../lib/epoch";
+import { acceptEpoch, MAX_EPOCH_S } from "../../../lib/epoch";
 
 /**
  * Dynamic on purpose.
@@ -13,12 +13,14 @@ import { readEpoch } from "../../../lib/epoch";
  * honest fix is to say so rather than to reach for a cache that hides it.
  *
  * The response is still immutable per URL: the world is a pure function of
- * `(volcano, epoch)`, so `Cache-Control` below is exactly right.
+ * `(volcano, epoch)`, so `Cache-Control` below is exactly right. That claim is
+ * only true because the epoch is validated rather than clamped, so two
+ * distinct URLs never resolve to the same answer.
  */
 export const dynamic = "force-dynamic";
 
 /**
- * `GET /api/displacement?volcano=&epoch=` — the forward deformation field.
+ * `GET /api/displacement?volcano=&epoch=` - the forward deformation field.
  *
  * A thin adapter over `@repo/core`: parse, validate, call, shape. No geophysics
  * lives in the route handler.
@@ -32,7 +34,14 @@ export function GET(request: Request) {
       { status: 400 },
     );
   }
-  const { epochS, timestampIso } = readEpoch(searchParams);
+  const epoch = acceptEpoch(searchParams);
+  if (!epoch.ok) {
+    return NextResponse.json(
+      { error: epoch.error, hint: `valid epochs are 0 to ${MAX_EPOCH_S} seconds` },
+      { status: 400 },
+    );
+  }
+  const { epochS, timestampIso } = epoch;
   const stations = gnssStationsFor(volcano.id);
   const source = volcanoSource(volcano, epochS);
   return NextResponse.json(

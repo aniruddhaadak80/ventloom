@@ -25,6 +25,7 @@
     "test:e2e": "bun run --cwd apps/web build && bun run --cwd apps/web test:e2e",
     "scale": "bun scripts/loc-count.mjs",
     "assets": "bun scripts/gen-assets.mjs",
+    "test:live": "bun scripts/live-smoke.mjs",
     "check": "bun run typecheck && bun run lint && bun run test:unit && bun run build"
   },
   "devDependencies": {

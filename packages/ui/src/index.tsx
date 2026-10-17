@@ -1,5 +1,5 @@
 /**
- * `@repo/ui` — the ventloom design system.
+ * `@repo/ui` - the ventloom design system.
  *
  * Import from `@repo/ui` in the app. Nothing in here may import from the app or
  * from `@repo/core`: the design system knows about geometry and colour, not

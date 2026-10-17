@@ -2,7 +2,7 @@
  * Tests for the network model and the seeded world.
  *
  * These live in `@repo/seed` rather than `@repo/core` because they exercise the
- * catalogue the core model is parameterised by — the dependency runs one way
+ * catalogue the core model is parameterised by - the dependency runs one way
  * only, seed → core, with no cycle.
  */
 
@@ -75,7 +75,7 @@ describe("network model", () => {
     }
   });
 
-  it("is a pure function of the epoch — the time machine's contract", () => {
+  it("is a pure function of the epoch - the time machine's contract", () => {
     const a = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 5 * SECONDS_PER_DAY);
     const b = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 5 * SECONDS_PER_DAY);
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));

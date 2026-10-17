@@ -1,4 +1,4 @@
-﻿import {
+import {
   ALERT_RULES,
   DEFAULT_POISSON,
   mogiCoupling,

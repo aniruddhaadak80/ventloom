@@ -44,7 +44,15 @@ export default defineConfig({
     //
     // `ignore` rather than `pipe`: the observatory logs on every request and a
     // full captured pipe makes the server abort mid-run.
-    command: "bun run start",
+    //
+    // `PORT` is set explicitly and it has to be. `next start` reads `PORT` and
+    // silently falls back to 3000, while Playwright polls `url` below. Leaving
+    // the two to disagree meant the server bound 3000, Playwright waited on 3100
+    // for ever, and the failure surfaced as the useless "Process from
+    // config.webServer was not able to start" rather than as a port mismatch.
+    // `cross-env` rather than `PORT=3100 cmd` because the suite has to start
+    // the same way on a Linux CI runner and on a Windows workstation.
+    command: `cross-env PORT=${PORT} bun run start`,
     url: `${BASE_URL}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
