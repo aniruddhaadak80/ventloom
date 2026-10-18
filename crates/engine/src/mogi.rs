@@ -213,8 +213,8 @@ fn jacobian(stations: &[Station], source: &Source, poisson: f64) -> Vec<f64> {
         j[base + 7] = (1.0 - poisson) * dn / (std::f64::consts::PI * r3);
 
         // âˆ‚w/âˆ‚s, âˆ‚w/âˆ‚f
-        j[base + 8] = -3.0 * c * d * de / r5;
-        j[base + 9] = -3.0 * c * d * dn / r5;
+        j[base + 8] = 3.0 * c * d * de / r5;
+        j[base + 9] = 3.0 * c * d * dn / r5;
 
         // âˆ‚w/âˆ‚d = C (1/rÂ³ âˆ’ 3dÂ²/râµ)
         j[base + 10] = c * (1.0 / r3 - 3.0 * d * d / r5);
@@ -679,19 +679,23 @@ mod tests {
     #[test]
     fn epicentre_subsides_at_the_expected_rate() {
         // The 1914 TaishÅ Sakurajima case: d = 10 km, Î”V = âˆ’0.98 kmÂ³,
-        // Î½ = 0.25 gives exactly âˆ’1.5625 m at the summit.
+        // Î½ = 0.25 gives exactly âˆ’2.3395776634508616 m at the summit: w = C*d/r^3 = -7.35/pi.
         let source = Source {
             east_offset_m: 0.0,
             north_offset_m: 0.0,
             depth_m: 10_000.0,
-            volume_change_m3: -980_000.0,
+            volume_change_m3: -980_000_000.0,
         };
         let station = Station {
             east_offset_m: 0.0,
             north_offset_m: 0.0,
         };
         let d = station_displacement(&station, &source, 0.25);
-        assert!((d.up_m - -1.5625).abs() < TOL, "up = {}", d.up_m);
+        assert!(
+            (d.up_m - -2.3395776634508616).abs() < TOL,
+            "up = {}",
+            d.up_m
+        );
         assert_eq!(d.east_m, 0.0);
         assert_eq!(d.north_m, 0.0);
     }

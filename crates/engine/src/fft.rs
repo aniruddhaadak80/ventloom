@@ -267,10 +267,14 @@ mod tests {
 
     #[test]
     fn split_bin_tone_lands_in_its_own_bin() {
-        // An exactly bin-centred tone must not leak: its neighbours should be
-        // at least 60 dB down after the Hann window.
+        // A bin-centred tone is coherent sampling, so after the Hann window the
+        // spectrum is exactly three bins wide and nothing else. Multiplying
+        // `sin(2*pi*k*i/n)` by `0.5 - 0.5*cos(2*pi*i/n)` puts 1/2 of the tone's
+        // amplitude in bin `k` and 1/4 in each of `k +- 1` (about -12 dB), with
+        // every other bin at zero. The previous bound of `peak * 1e-3` — the
+        // comment's "60 dB down" — sat below what the window itself can deliver,
+        // so it could never hold for a windowed signal.
         let n = 1024;
-        let rate = 1024.0;
         let bin = 64;
         let signal: Vec<f64> = (0..n)
             .map(|i| (std::f64::consts::TAU * bin as f64 * i as f64 / n as f64).sin())
@@ -278,11 +282,14 @@ mod tests {
         let mags = amplitude_spectrum(&signal).expect("spectrum");
         let peak = mags[bin];
         for (i, m) in mags.iter().enumerate() {
-            if i == bin {
+            if i.abs_diff(bin) <= 1 {
+                // The window's own spread: 1/4 amplitude, within 1% of exact.
+                assert!(*m <= peak * 0.2525, "bin {i} too hot: {m} vs peak {peak}");
                 continue;
             }
-            assert!(*m < peak * 1e-3, "bin {i} leaked: {m} vs peak {peak}");
+            // Nothing outside the three bins the window can reach, at least six
+            // orders of magnitude below the window's own leakage.
+            assert!(*m < peak * 1e-6, "bin {i} leaked: {m} vs peak {peak}");
         }
-        let _ = rate;
     }
 }
