@@ -13,8 +13,9 @@
  *      nothing else may.
  *
  * A local `next start` cannot catch a bundle that shipped without its
- * workspace packages, a route that 405s in production, or a cache header that
- * lies. Only a request against the live edge can.
+ * workspace packages, a route that 405s in production, a seismometer's zero
+ * vector being fitted as a displacement, or a cache header that lies. Only a
+ * request against the live edge can.
  *
  * Usage:
  *   node scripts/live-smoke.mjs [baseUrl]
@@ -40,9 +41,32 @@ const check = (label, condition, detail = "") =>
 
 const section = (name) => console.log(`\n${name}`);
 
+/**
+ * fetch with retries.
+ *
+ * This runs against a live edge, not localhost. A connect timeout on one
+ * request says nothing about the contract being asserted, and a gate that
+ * fails because a TCP handshake timed out is a gate people will delete. The
+ * transport gets retried; assertions never do, because that is the part that
+ * is actually under test.
+ */
+async function fetchWithRetry(path, init = {}) {
+  let lastError;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      return await fetch(`${BASE}${path}`, init);
+    } catch (error) {
+      lastError = error;
+      if (attempt === 4) break;
+      await new Promise((resolve) => setTimeout(resolve, attempt * 1500));
+    }
+  }
+  throw lastError;
+}
+
 /** Fetch and parse JSON, surfacing the HTTP status in the error. */
 async function getJson(path) {
-  const res = await fetch(`${BASE}${path}`, { headers: { accept: "application/json" } });
+  const res = await fetchWithRetry(path, { headers: { accept: "application/json" } });
   if (!res.ok) throw new Error(`${path} -> HTTP ${res.status}`);
   return { res, body: await res.json() };
 }
@@ -53,9 +77,25 @@ async function getJson(path) {
  * parallel load is exactly the class of defect this test exists to catch.
  */
 async function assertStable(path, label) {
-  const [a, b] = await Promise.all([fetch(`${BASE}${path}`), fetch(`${BASE}${path}`)]);
+  const [a, b] = await Promise.all([fetchWithRetry(path), fetchWithRetry(path)]);
   const [ta, tb] = await Promise.all([a.text(), b.text()]);
   check(label, ta === tb, `HTTP ${a.status}/${b.status} len=${ta.length}`);
+  return ta;
+}
+
+/** POST the same body twice, for routes that are not addressable by a URL. */
+async function assertStablePost(buildBody, label) {
+  const body = buildBody();
+  const post = async () => {
+    const r = await fetchWithRetry("/api/invert", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+    return r.text();
+  };
+  const [ta, tb] = await Promise.all([post(), post()]);
+  check(label, ta === tb, `len=${ta.length}`);
   return ta;
 }
 
@@ -87,24 +127,26 @@ await assertStable("/api/network?epoch=3888000", "network is stable");
 await assertStable("/api/displacement?volcano=kilauea&epoch=3888000", "displacement is stable");
 
 // The invert route is POST-only by design, so its determinism probe has to post
-// the same body twice rather than hitting a query string.
+// the same body twice rather than hitting a query string. It has to post the
+// geodetic subset too: the network snapshot reports every instrument, and only
+// the GNSS ones carry a displacement.
 {
   const net = (await getJson("/api/network?epoch=3888000")).body;
   const kilauea = net.volcanoes.find((v) => v.id === "kilauea");
-  const payload = JSON.stringify({
-    stations: kilauea.stations,
-    observations: kilauea.stations.map((s) => s.displacement),
-  });
-  const post = async () => {
-    const r = await fetch(`${BASE}/api/invert`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: payload,
-    });
-    return r.text();
-  };
-  const [ta, tb] = await Promise.all([post(), post()]);
-  check("inversion is stable", ta === tb, `len=${ta.length}`);
+  const geodetic = kilauea?.geodeticStations ?? [];
+  check(
+    "the network exposes a geodetic subset",
+    geodetic.length > 0,
+    `${geodetic.length} stations`,
+  );
+  await assertStablePost(
+    () =>
+      JSON.stringify({
+        stations: geodetic,
+        observations: geodetic.map((s) => s.displacement),
+      }),
+    "inversion is stable",
+  );
 }
 
 // ------------------------------------------------------------ epoch purity ---
@@ -128,24 +170,58 @@ check(
   `${(Math.abs(e45.displacement.at(-1).upM) * 1000).toFixed(3)} mm at the far station`,
 );
 
-const a45 = await fetch(`${BASE}/api/network?epoch=3888000`).then((r) => r.text());
-const a46 = await fetch(`${BASE}/api/network?epoch=3888001`).then((r) => r.text());
+const a45 = await fetchWithRetry("/api/network?epoch=3888000").then((r) => r.text());
+const a46 = await fetchWithRetry("/api/network?epoch=3888001").then((r) => r.text());
 check("one second apart is already a different world", a45 !== a46);
+
+// ----------------------------------------------------------------- shape ---
+section("the network reports instruments honestly");
+{
+  const net = (await getJson("/api/network?epoch=3888000")).body;
+  for (const volcano of net.volcanoes) {
+    if (volcano.stations.length === 0) continue;
+    for (const station of volcano.stations) {
+      if (station.instrument === "gnss") {
+        check(`${volcano.id}/${station.code} carries a field`, station.displacement !== null);
+      } else {
+        // A seismometer does not measure ground deformation. Reporting zeros
+        // is what let the inversion fit a chamber to data no chamber can
+        // produce.
+        check(
+          `${volcano.id}/${station.code} (${station.instrument}) reports null`,
+          station.displacement === null,
+          JSON.stringify(station.displacement),
+        );
+      }
+    }
+    check(
+      `${volcano.id} geodetic count matches its GNSS count`,
+      volcano.geodeticStations.length ===
+        volcano.stations.filter((s) => s.instrument === "gnss").length,
+    );
+  }
+}
 
 // -------------------------------------------------------------- inversion ---
 section("inversion recovers the source it was seeded from");
 {
   const net = (await getJson("/api/network?epoch=3888000")).body;
   const kilauea = net.volcanoes.find((v) => v.id === "kilauea");
-  const r = await fetch(`${BASE}/api/invert`, {
+  if (!kilauea) throw new Error("kilauea missing from the network snapshot");
+
+  const r = await fetchWithRetry("/api/invert", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      stations: kilauea.stations,
-      observations: kilauea.stations.map((s) => s.displacement),
+      stations: kilauea.geodeticStations,
+      observations: kilauea.geodeticStations.map((s) => s.displacement),
     }),
   });
-  const inv = await r.json();
+  // Check the status before parsing. A 400 here is the route refusing a
+  // malformed field, and parsing its error object as a fit would read
+  // `{error: "..."}` as a chamber with undefined parameters.
+  check("inversion accepted", r.ok, `HTTP ${r.status}`);
+  const inv = r.ok ? await r.json() : {};
   const truth = kilauea.source;
   check(
     "fit converged",
@@ -161,36 +237,68 @@ section("inversion recovers the source it was seeded from");
     inv.diagnostics?.rmsMisfitM < 1e-3,
     `${inv.diagnostics?.rmsMisfitM?.toExponential(2)} m`,
   );
-  check("residual count matches station count", inv.residuals?.length === kilauea.stations.length);
+  check(
+    "residual count matches station count",
+    inv.residuals?.length === kilauea.geodeticStations.length,
+  );
 }
 
 // --------------------------------------------------------------- rest hooks ---
 section("rest surface");
 {
-  const r = await fetch(`${BASE}/api/invert`, { method: "GET" });
+  const r = await fetchWithRetry("/api/invert", { method: "GET" });
   check("GET /api/invert is rejected", r.status === 405, `got ${r.status}`);
-  const bad = await fetch(`${BASE}/api/invert`, {
+  const bad = await fetchWithRetry("/api/invert", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ stations: [], observations: [] }),
   });
   check("empty field is rejected", bad.status >= 400, `got ${bad.status}`);
-  const mismatch = await fetch(`${BASE}/api/invert`, {
+  const mismatch = await fetchWithRetry("/api/invert", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ stations: [{}], observations: [] }),
   });
   check("mismatched lengths are rejected", mismatch.status === 400, `got ${mismatch.status}`);
-  const unknown = await fetch(`${BASE}/api/displacement?volcano=not-a-volcano`);
+
+  // The regression, stated as an assertion rather than a hope.
+  const net = (await getJson("/api/network?epoch=3888000")).body;
+  const kilauea = net.volcanoes.find((v) => v.id === "kilauea");
+  const nonGeodetic = kilauea.stations.find((s) => s.instrument !== "gnss");
+  if (nonGeodetic) {
+    const rejected = await fetchWithRetry("/api/invert", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        stations: kilauea.stations,
+        observations: kilauea.stations.map((s) => s.displacement),
+      }),
+    });
+    check(
+      "a non-geodetic station is refused by name",
+      rejected.status === 400 && (await rejected.clone().text()).includes("GNSS"),
+      `got ${rejected.status}`,
+    );
+  } else {
+    ok("no non-geodetic station at this epoch; skipping");
+  }
+
+  const unknown = await fetchWithRetry("/api/displacement?volcano=not-a-volcano");
   check("unknown volcano is rejected", unknown.status >= 400, `got ${unknown.status}`);
-  const huge = await fetch(`${BASE}/api/network?epoch=99999999999`);
-  check("epoch past the ceiling is rejected", huge.status >= 400, `got ${huge.status}`);
+  const huge = await fetchWithRetry("/api/network?epoch=99999999999");
+  check("epoch past the ceiling is refused, not clamped", huge.status >= 400, `got ${huge.status}`);
+  for (const value of ["-1", "1.5", "1e3", "abc"]) {
+    const r = await fetchWithRetry(`/api/network?epoch=${encodeURIComponent(value)}`);
+    check(`epoch=${value} is refused`, r.status >= 400, `got ${r.status}`);
+  }
+  const horizon = await fetchWithRetry("/api/network?epoch=31536000");
+  check("the horizon itself is legal", horizon.ok, `got ${horizon.status}`);
 }
 
 // ------------------------------------------------------------------ caching ---
 section("cache headers");
 {
-  const r = await fetch(`${BASE}/api/network?epoch=3888000`);
+  const r = await fetchWithRetry("/api/network?epoch=3888000");
   const cc = r.headers.get("cache-control") ?? "";
   check("immutable cache header on a pure route", cc.includes("immutable"), cc);
 }
@@ -209,14 +317,14 @@ for (const p of [
   "/volcanoes/etna",
   "/volcanoes/stromboli",
 ]) {
-  const r = await fetch(`${BASE}${p}`);
+  const r = await fetchWithRetry(p);
   const html = await r.text();
   check(p, r.ok && html.includes("ventloom"), `HTTP ${r.status} len=${html.length}`);
 }
 
 section("open graph card");
 {
-  const r = await fetch(`${BASE}/og`);
+  const r = await fetchWithRetry("/og");
   const buf = Buffer.from(await r.arrayBuffer());
   check(
     "og is a png",
@@ -229,7 +337,7 @@ section("open graph card");
 
 section("unknown routes");
 {
-  const r = await fetch(`${BASE}/this-route-does-not-exist`);
+  const r = await fetchWithRetry("/this-route-does-not-exist");
   check("404 for an unknown page", r.status === 404, `got ${r.status}`);
 }
 
