@@ -400,6 +400,17 @@ fn solve(
         let trial_residuals = residual_vector(stations, &trial, poisson, observed);
         let trial_cost = cost(&trial_residuals);
 
+        // How far this step moves the model, relative to the parameters
+        // themselves. Near a minimum the *relative cost reduction* stops being
+        // a usable signal: on the noiseless synthetic case the cost is already
+        // at the float-rounding floor, so a relative change of 1e-10 in it says
+        // nothing at all. The step does — a proposal that no longer moves any
+        // parameter is convergence whatever it does to the cost.
+        let step_moved = step[0].abs() / (1.0 + current.east_offset_m.abs())
+            + step[1].abs() / (1.0 + current.north_offset_m.abs())
+            + step[2].abs() / current.depth_m.max(1.0)
+            + step[3].abs() / current.volume_change_m3.abs().max(1.0);
+
         if trial_cost < cost_now {
             let reduction = (cost_now - trial_cost) / cost_now.max(1e-30);
             cost_now = trial_cost;
@@ -412,6 +423,20 @@ fn solve(
                 termination = "relative cost reduction below tolerance".into();
                 break;
             }
+            if step_moved < options.tolerance {
+                converged = true;
+                termination = "step below tolerance (model stationary)".into();
+                break;
+            }
+        } else if step_moved < options.tolerance {
+            // Every remaining direction is uphill, and damping has already
+            // shrunk the proposal until it cannot move the model at all. That is
+            // a stationary point of the cost, which is what convergence means
+            // for a least-squares problem — report it as one rather than
+            // abandoning the iterate at whatever `lambda` saturation left.
+            converged = true;
+            termination = "stationary point reached (no downhill step available)".into();
+            break;
         } else {
             // Rejected the step. Damp harder and try again from the same
             // point rather than accepting a worse model.

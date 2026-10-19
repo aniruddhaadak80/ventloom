@@ -268,12 +268,14 @@ mod tests {
     #[test]
     fn split_bin_tone_lands_in_its_own_bin() {
         // A bin-centred tone is coherent sampling, so after the Hann window the
-        // spectrum is exactly three bins wide and nothing else. Multiplying
-        // `sin(2*pi*k*i/n)` by `0.5 - 0.5*cos(2*pi*i/n)` puts 1/2 of the tone's
-        // amplitude in bin `k` and 1/4 in each of `k +- 1` (about -12 dB), with
-        // every other bin at zero. The previous bound of `peak * 1e-3` — the
-        // comment's "60 dB down" — sat below what the window itself can deliver,
-        // so it could never hold for a windowed signal.
+        // spectrum is exactly three bins wide and nothing else. The window
+        // `0.5 - 0.5*cos(2*pi*i/n)` has half its weight on the centre bin and a
+        // quarter on each neighbour, so the tone's own 1/2 : 1/2 two-sided
+        // spectrum leaves `peak : neighbour : neighbour` of 1 : 0.5 : 0.5 (about
+        // -6 dB, the well-known shape of a Hann main lobe) and zero elsewhere.
+        // The previous bound of `peak * 1e-3` — the comment's "60 dB down" —
+        // sat far below what the window itself can deliver, so it could never
+        // hold for a windowed signal.
         let n = 1024;
         let bin = 64;
         let signal: Vec<f64> = (0..n)
@@ -283,8 +285,8 @@ mod tests {
         let peak = mags[bin];
         for (i, m) in mags.iter().enumerate() {
             if i.abs_diff(bin) <= 1 {
-                // The window's own spread: 1/4 amplitude, within 1% of exact.
-                assert!(*m <= peak * 0.2525, "bin {i} too hot: {m} vs peak {peak}");
+                // The window's own spread: half the peak, within 2% of exact.
+                assert!(*m <= peak * 0.51, "bin {i} too hot: {m} vs peak {peak}");
                 continue;
             }
             // Nothing outside the three bins the window can reach, at least six
