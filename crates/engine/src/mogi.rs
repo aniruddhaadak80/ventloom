@@ -350,6 +350,11 @@ fn solve(
     let mut iterations = 0u32;
     let mut cost_history = vec![cost_now];
 
+    // Largest `|J'r|` seen so far, set by the first iteration. The gradient
+    // ratio below is measured against it, so "converged" means the same thing
+    // whether the solver started far from the minimum or already near it.
+    let mut gradient_scale = 0.0f64;
+
     for iteration in 0..options.max_iterations {
         iterations = iteration + 1;
         let j = jacobian(stations, &current, poisson);
@@ -410,6 +415,27 @@ fn solve(
             + step[1].abs() / (1.0 + current.north_offset_m.abs())
             + step[2].abs() / current.depth_m.max(1.0)
             + step[3].abs() / current.volume_change_m3.abs().max(1.0);
+
+        // First-order optimality: at a least-squares minimum `J'r` is exactly
+        // zero, and that stays true with noise in the data — noise moves the
+        // minimum, it does not blur the normal equation. So this is the
+        // criterion that survives a noise floor, where the relative cost
+        // reduction never settles and the step keeps creeping along the
+        // shallow depth/volume valley.
+        let gradient = jtr.iter().map(|g| g * g).sum::<f64>().sqrt();
+        let gradient_ratio = if gradient_scale > 0.0 {
+            gradient / gradient_scale
+        } else {
+            0.0
+        };
+        if gradient_ratio < options.tolerance {
+            converged = true;
+            termination = "gradient below tolerance (least-squares minimum)".into();
+            break;
+        }
+        if gradient > gradient_scale {
+            gradient_scale = gradient;
+        }
 
         if trial_cost < cost_now {
             let reduction = (cost_now - trial_cost) / cost_now.max(1e-30);
