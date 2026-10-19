@@ -284,7 +284,7 @@ mod tests {
         let mags = amplitude_spectrum(&signal).expect("spectrum");
         let peak = mags[bin];
         for (i, m) in mags.iter().enumerate() {
-            if i.abs_diff(bin) <= 1 {
+            if i.abs_diff(bin) == 1 {
                 // The window's own spread: half the peak, within 2% of exact.
                 assert!(*m <= peak * 0.51, "bin {i} too hot: {m} vs peak {peak}");
                 continue;
