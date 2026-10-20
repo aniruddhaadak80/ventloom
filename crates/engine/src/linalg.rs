@@ -125,7 +125,7 @@ mod tests {
     fn solves_a_coupled_system() {
         let a = [[3.0, 2.0, -1.0], [1.0, -2.0, 3.0], [2.0, 1.0, 1.0]];
         let x = solve_linear(&a, &[8.0, -2.0, 9.0]).expect("solve");
-        let expected = [2.0, 3.0, 1.0];
+        let expected = [-0.2, 6.0, 3.4];
         for (got, want) in x.iter().zip(&expected) {
             assert!((got - want).abs() < 1e-9, "got {got}, want {want}");
         }
