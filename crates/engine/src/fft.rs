@@ -267,10 +267,16 @@ mod tests {
 
     #[test]
     fn split_bin_tone_lands_in_its_own_bin() {
-        // An exactly bin-centred tone must not leak: its neighbours should be
-        // at least 60 dB down after the Hann window.
+        // A bin-centred tone is coherent sampling, so after the Hann window the
+        // spectrum is exactly three bins wide and nothing else. The window
+        // `0.5 - 0.5*cos(2*pi*i/n)` has half its weight on the centre bin and a
+        // quarter on each neighbour, so the tone's own 1/2 : 1/2 two-sided
+        // spectrum leaves `peak : neighbour : neighbour` of 1 : 0.5 : 0.5 (about
+        // -6 dB, the well-known shape of a Hann main lobe) and zero elsewhere.
+        // The previous bound of `peak * 1e-3` — the comment's "60 dB down" —
+        // sat far below what the window itself can deliver, so it could never
+        // hold for a windowed signal.
         let n = 1024;
-        let rate = 1024.0;
         let bin = 64;
         let signal: Vec<f64> = (0..n)
             .map(|i| (std::f64::consts::TAU * bin as f64 * i as f64 / n as f64).sin())
@@ -281,8 +287,14 @@ mod tests {
             if i == bin {
                 continue;
             }
-            assert!(*m < peak * 1e-3, "bin {i} leaked: {m} vs peak {peak}");
+            if i.abs_diff(bin) == 1 {
+                // The window's own spread: half the peak, within 2% of exact.
+                assert!(*m <= peak * 0.51, "bin {i} too hot: {m} vs peak {peak}");
+                continue;
+            }
+            // Nothing outside the three bins the window can reach, at least six
+            // orders of magnitude below the window's own leakage.
+            assert!(*m < peak * 1e-6, "bin {i} leaked: {m} vs peak {peak}");
         }
-        let _ = rate;
     }
 }
