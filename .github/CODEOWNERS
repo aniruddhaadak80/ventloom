@@ -1,0 +1,5 @@
+# Code owners for ventloom
+* @aniruddhaadak80
+/.github/ @aniruddhaadak80
+/crates/ @aniruddhaadak80
+/services/ @aniruddhaadak80
