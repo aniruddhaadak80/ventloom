@@ -160,4 +160,13 @@ jobs:
       - name: Assert the deployed observatory honours its contract
         env:
           VENTLOOM_URL: ${{ vars.VENTLOOM_DEPLOY_URL }}
-        run: bun scripts/live-smoke.mjs "$VENTLOOM_URL"
+        run: |
+          # The wait step above skips when no production alias is configured.
+          # This step has to skip too, or it runs the smoke test against an
+          # empty base URL and fails on a missing configuration rather than on
+          # a broken contract.
+          if [ -z "$VENTLOOM_URL" ]; then
+            echo "VENTLOOM_DEPLOY_URL is not set; skipping the live contract assertions"
+            exit 0
+          fi
+          bun scripts/live-smoke.mjs "$VENTLOOM_URL"
