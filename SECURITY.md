@@ -16,8 +16,9 @@ privately with:
 - **Email**: `aniruddha.adak@email.com`
 
 Include, where you can, a reproduction, the affected path and whether the
-problem is reachable from the network. Please give at least 30 days before
-public disclosure. You will be credited in the advisory and in the release notes.
+problem is reachable from the network. We aim to acknowledge every report
+within 48 hours. Please give at least 30 days before public disclosure. You
+will be credited in the advisory and in the release notes.
 
 ## Threat model
 
@@ -44,7 +45,7 @@ reporting, consider whether your finding falls inside these boundaries:
   ventloom is not a real-time service.
 - The synthetically generated data. It describes no real unrest, and will
   never be presented as if it did.
--Issues in forked or modified copies of the repository.
+- Issues in forked or modified copies of the repository.
 
 ## Disclosure policy
 
