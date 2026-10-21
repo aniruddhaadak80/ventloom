@@ -24,10 +24,19 @@
  * Exits non-zero on the first contract violation it can prove.
  */
 
-const BASE = (process.argv[2] ?? process.env.VENTLOOM_URL ?? "https://ventloom.vercel.app").replace(
+// `||`, not `??`. An empty argument is an unset argument, not a base URL. CI
+// passes "$VENTLOOM_URL" straight through, and an unset variable arrives as an
+// empty string that `??` accepts as the base. Every request then becomes a
+// relative URL and the gate dies on its first fetch with a URL error.
+const BASE = (process.argv[2] || process.env.VENTLOOM_URL || "https://ventloom.vercel.app").replace(
   /\/$/,
   "",
 );
+
+if (!/^https?:\/\//.test(BASE)) {
+  console.error(`live smoke needs an absolute base URL, got "${BASE}"`);
+  process.exit(2);
+}
 
 let failures = 0;
 
