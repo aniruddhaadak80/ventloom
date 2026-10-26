@@ -28,6 +28,18 @@ import {
 } from "@repo/seed";
 import { describe, expect, it } from "vitest";
 
+/**
+ * `networkSnapshot` is the most expensive thing the unit suite does: each call
+ * synthesises 84 stations, 12 Mogi fields and 84 tremor traces, and the
+ * determinism test calls it twice more and stringifies both results. On an
+ * idle machine that is well under a second; on a CI runner sharing a box with
+ * five sibling jobs it can blow past vitest's 5 s default and redden the suite
+ * for a reason that has nothing to do with the code. The tests that build a
+ * snapshot pass this explicitly, so the number sits next to what needs it
+ * instead of being raised globally for the whole repo.
+ */
+const SNAPSHOT_TIMEOUT_MS = 60_000;
+
 describe("the seed world", () => {
   it("declares a twelve-volcano catalogue with unique ids", () => {
     expect(VOLCANO_CATALOGUE).toHaveLength(12);
@@ -75,17 +87,25 @@ describe("network model", () => {
     }
   });
 
-  it("is a pure function of the epoch - the time machine's contract", () => {
-    const a = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 5 * SECONDS_PER_DAY);
-    const b = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 5 * SECONDS_PER_DAY);
-    expect(JSON.stringify(a)).toBe(JSON.stringify(b));
-  });
+  it(
+    "is a pure function of the epoch - the time machine's contract",
+    () => {
+      const a = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 5 * SECONDS_PER_DAY);
+      const b = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 5 * SECONDS_PER_DAY);
+      expect(JSON.stringify(a)).toBe(JSON.stringify(b));
+    },
+    SNAPSHOT_TIMEOUT_MS,
+  );
 
-  it("produces a different observatory at a different epoch", () => {
-    const early = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 0);
-    const later = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 30 * SECONDS_PER_DAY);
-    expect(JSON.stringify(early)).not.toBe(JSON.stringify(later));
-  });
+  it(
+    "produces a different observatory at a different epoch",
+    () => {
+      const early = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 0);
+      const later = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 30 * SECONDS_PER_DAY);
+      expect(JSON.stringify(early)).not.toBe(JSON.stringify(later));
+    },
+    SNAPSHOT_TIMEOUT_MS,
+  );
 
   it("keeps the Mogi source physical", () => {
     for (let epoch = 0; epoch < 90 * SECONDS_PER_DAY; epoch += SECONDS_PER_DAY) {
@@ -97,48 +117,64 @@ describe("network model", () => {
     }
   });
 
-  it("derives indicators that stay finite and non-negative", () => {
-    for (let epoch = 0; epoch < 120 * SECONDS_PER_DAY; epoch += SECONDS_PER_DAY) {
-      const indicators = unrestIndicators(kilauea, epoch);
-      for (const [key, value] of Object.entries(indicators)) {
-        expect(Number.isFinite(value), `${key} at epoch ${epoch}`).toBe(true);
+  it(
+    "derives indicators that stay finite and non-negative",
+    () => {
+      for (let epoch = 0; epoch < 120 * SECONDS_PER_DAY; epoch += SECONDS_PER_DAY) {
+        const indicators = unrestIndicators(kilauea, epoch);
+        for (const [key, value] of Object.entries(indicators)) {
+          expect(Number.isFinite(value), `${key} at epoch ${epoch}`).toBe(true);
+        }
+        expect(indicators.so2TonnesPerDay).toBeGreaterThanOrEqual(0);
+        expect(indicators.vtEvents24h).toBeGreaterThanOrEqual(0);
+        expect(indicators.thermalPixels24h).toBeGreaterThanOrEqual(0);
+        expect(indicators.rsamRatio).toBeGreaterThan(0);
       }
-      expect(indicators.so2TonnesPerDay).toBeGreaterThanOrEqual(0);
-      expect(indicators.vtEvents24h).toBeGreaterThanOrEqual(0);
-      expect(indicators.thermalPixels24h).toBeGreaterThanOrEqual(0);
-      expect(indicators.rsamRatio).toBeGreaterThan(0);
-    }
-  });
+    },
+    SNAPSHOT_TIMEOUT_MS,
+  );
 
-  it("reports a GNSS displacement field with real signal in it", () => {
-    const snapshot = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 20 * SECONDS_PER_DAY);
-    const volcano = snapshot.volcanoes.find((v) => v.volcano.id === "kilauea");
-    if (!volcano) throw new Error("missing snapshot");
-    const gnss = volcano.stations.filter((s) => s.station.instrument === "gnss");
-    expect(gnss.length).toBeGreaterThan(1);
-    const ups = gnss.map((s) => s.displacement.upM);
-    expect(Math.max(...ups) - Math.min(...ups)).toBeGreaterThan(1e-4);
-  });
+  it(
+    "reports a GNSS displacement field with real signal in it",
+    () => {
+      const snapshot = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 20 * SECONDS_PER_DAY);
+      const volcano = snapshot.volcanoes.find((v) => v.volcano.id === "kilauea");
+      if (!volcano) throw new Error("missing snapshot");
+      const gnss = volcano.stations.filter((s) => s.station.instrument === "gnss");
+      expect(gnss.length).toBeGreaterThan(1);
+      const ups = gnss.map((s) => s.displacement.upM);
+      expect(Math.max(...ups) - Math.min(...ups)).toBeGreaterThan(1e-4);
+    },
+    SNAPSHOT_TIMEOUT_MS,
+  );
 
-  it("agrees with an independent Mogi forward evaluation", () => {
-    const snapshot = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 12 * SECONDS_PER_DAY);
-    const volcano = snapshot.volcanoes[0];
-    if (!volcano) throw new Error("missing snapshot");
-    const expected = mogiForward(gnssStationsFor(volcano.volcano.id), volcano.source);
-    const reported = volcano.stations
-      .filter((s) => s.station.instrument === "gnss")
-      .map((s) => s.displacement);
-    reported.forEach((d, i) => {
-      expect(d.upM).toBeCloseTo(expected[i]?.upM as number, 9);
-      expect(d.eastM).toBeCloseTo(expected[i]?.eastM as number, 9);
-      expect(d.northM).toBeCloseTo(expected[i]?.northM as number, 9);
-    });
-  });
+  it(
+    "agrees with an independent Mogi forward evaluation",
+    () => {
+      const snapshot = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, 12 * SECONDS_PER_DAY);
+      const volcano = snapshot.volcanoes[0];
+      if (!volcano) throw new Error("missing snapshot");
+      const expected = mogiForward(gnssStationsFor(volcano.volcano.id), volcano.source);
+      const reported = volcano.stations
+        .filter((s) => s.station.instrument === "gnss")
+        .map((s) => s.displacement);
+      reported.forEach((d, i) => {
+        expect(d.upM).toBeCloseTo(expected[i]?.upM as number, 9);
+        expect(d.eastM).toBeCloseTo(expected[i]?.eastM as number, 9);
+        expect(d.northM).toBeCloseTo(expected[i]?.northM as number, 9);
+      });
+    },
+    SNAPSHOT_TIMEOUT_MS,
+  );
 
-  it("labels the timestamp from the world epoch", () => {
-    const snapshot = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, SECONDS_PER_DAY);
-    expect(snapshot.timestampIso).toBe("2026-01-02T00:00:00.000Z");
-  });
+  it(
+    "labels the timestamp from the world epoch",
+    () => {
+      const snapshot = networkSnapshot(VOLCANO_CATALOGUE, STATION_NETWORK, SECONDS_PER_DAY);
+      expect(snapshot.timestampIso).toBe("2026-01-02T00:00:00.000Z");
+    },
+    SNAPSHOT_TIMEOUT_MS,
+  );
 });
 
 describe("geodesy helpers", () => {
