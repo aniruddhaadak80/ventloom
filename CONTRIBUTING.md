@@ -69,6 +69,45 @@ feature is also its documenter.
 - `force-static` on any route that reads a query parameter is forbidden - see
   the comment in `app/api/displacement/route.ts`.
 
+## Troubleshooting
+
+### The build dies on `/404` with `Cannot read properties of null (reading 'useContext')`
+
+This is almost always duplicate React, and on Windows there is one specific way
+to get it: **workspace symlinks whose target carries the wrong path casing.**
+
+Windows resolves paths case-insensitively, so a symlink that points at
+`C:\Users\aniruddha\...` instead of `C:\Users\ANIRUDDHA\...` opens the right
+files and every command keeps succeeding. Webpack is less forgiving: it keys
+modules by the literal identifier string, so React reached through one casing
+and React reached through the other become two separate module instances. The
+pages-router `_error` bundle that prerenders `/404` then reads `useContext` off
+`null` and the build exits.
+
+It usually gets introduced by running a package manager from a mistyped working
+directory, which writes the typo into the symlink targets it creates.
+
+Diagnose it by listing every workspace-level symlink and grepping its target:
+
+```powershell
+foreach ($s in @(".", "apps\web", "packages\core", "packages\seed", "packages\ui", "packages\sdk")) {
+  $nm = Join-Path $s "node_modules"
+  Get-ChildItem $nm -Force -ErrorAction SilentlyContinue |
+    Where-Object { $_.LinkType } |
+    ForEach-Object {
+      if (($_.Target -join ';') -notlike "*ANIRUDDHA*") { "BAD $s/$($_.Name)" }
+    }
+}
+```
+
+Fix it by deleting the offending links and re-installing, so the package
+manager rewrites them from the path you are actually in. Clearing `.next` and
+`.turbo` afterwards is not enough on its own - the links are what is wrong, not
+the cache.
+
+Linux and macOS cannot hit this, which is why CI and the Vercel deploy stay
+green while a Windows checkout fails to build at all.
+
 ## Getting help
 
 The repo is maintained by [@aniruddhaadak80](https://github.com/aniruddhaadak80)
