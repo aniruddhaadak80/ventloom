@@ -17,8 +17,7 @@
     "@repo/ui": "workspace:*",
     "next": "^15.5.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "zod": "^4.6.6"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
