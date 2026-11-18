@@ -32,3 +32,18 @@ updates:
       update-types:
       - minor
       - patch
+# The JavaScript workspace installs with Bun (bun.lock at the root), so the
+# npm ecosystem cannot resolve it: security updates for the workspace fail with
+# dependency_file_not_supported. Dependabot only supports version updates for
+# Bun, so use that ecosystem for routine bumps and apply security updates by
+# hand when an advisory fires.
+- package-ecosystem: bun
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 5
+  groups:
+    bun-minor-patch:
+      update-types:
+      - minor
+      - patch
