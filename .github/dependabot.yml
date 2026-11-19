@@ -32,3 +32,13 @@ updates:
       update-types:
       - minor
       - patch
+- package-ecosystem: bun
+  directory: /
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 5
+  groups:
+    bun-minor-patch:
+      update-types:
+      - minor
+      - patch
