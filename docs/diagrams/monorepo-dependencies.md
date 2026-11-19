@@ -48,7 +48,7 @@ Go toolchain each manage their own dependency graph entirely independently.
 That boundary is deliberate. A `cargo build` must not be able to break
 `bun run typecheck`, and a Python transitive dependency bump must not appear
 in `bun.lock`. Each toolchain owns its own lockfile, its own CI job and its own
-failure mode. The only coupling between them is the *agreement* enforced by
+failure mode. The only coupling between them is the _agreement_ enforced by
 tests: the Rust solver against the TypeScript one, and the Python rule table
 against the TypeScript one.
 

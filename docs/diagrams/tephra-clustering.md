@@ -54,9 +54,10 @@ Euclidean distance meaningless, in a specific and provable way.
 
 Take a basalt measured as 50 % SiO₂ with everything else fixed. Now imagine
 the lab reports it after a unit change that doubles every value and renormalises
+
 - the same rock. Euclidean distance between the two reports is large, and the
-rock is identical. Any metric that can be moved by renormalising the same
-sample is not measuring the sample.
+  rock is identical. Any metric that can be moved by renormalising the same
+  sample is not measuring the sample.
 
 The centered log-ratio transform removes this. Taking logs turns multiplicative
 closure into additive closure, and subtracting the mean log makes the result

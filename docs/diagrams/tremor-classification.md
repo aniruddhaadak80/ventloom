@@ -1,6 +1,6 @@
 # Tremor classification
 
-How a raw waveform becomes a mechanism label, and why the *band ratios* do the
+How a raw waveform becomes a mechanism label, and why the _band ratios_ do the
 work rather than the amplitude.
 
 ```mermaid
@@ -63,7 +63,7 @@ flowchart TB
 
 The intuitive read is: tremor is a smooth oscillation, so its crest factor
 should be near 1.4, and noise is spiky, so it should be high. That is true of
-*white* noise, and completely false of the noise a real short-period station
+_white_ noise, and completely false of the noise a real short-period station
 records. Background seismic noise is roughly 1/f² below about a 1.5 Hz corner
 and flat above it, and filtering a signal that way raises its crest factor to
 around 9 without making it impulsive at all.
@@ -78,9 +78,10 @@ background noise puts almost none there.
 
 A harmonic tremor's fundamental sits near 1.5 Hz. At 16 Hz sampling over 60
 seconds, bin spacing is 0.056 Hz, which resolves 1.5 Hz comfortably in
-principle. In practice the fundamental is the *weakest* member of the series
+principle. In practice the fundamental is the _weakest_ member of the series
+
 - conduit resonance radiates more efficiently at its overtones - so it often
-sits within a few dB of the noise floor while the 3 Hz and 4.5 Hz harmonics
-are unmistakable. The classifier therefore treats a missing fundamental as
-weak evidence rather than as disproof, which is why the harmonic series test
-is a separate input to the score rather than a gate.
+  sits within a few dB of the noise floor while the 3 Hz and 4.5 Hz harmonics
+  are unmistakable. The classifier therefore treats a missing fundamental as
+  weak evidence rather than as disproof, which is why the harmonic series test
+  is a separate input to the score rather than a gate.
