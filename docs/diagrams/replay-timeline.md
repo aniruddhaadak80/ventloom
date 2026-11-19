@@ -70,7 +70,7 @@ the same pure functions the server rendered.
 
 ## The honest limitation
 
-Determinism is a property of *this* repo, not of volcanology. A real
+Determinism is a property of _this_ repo, not of volcanology. A real
 observatory ingests data that arrives late, gets revised and is occasionally
 wrong. ventloom sidesteps that entirely by generating its world from a seed,
 which buys perfect reproducibility at the cost of being a simulation. The

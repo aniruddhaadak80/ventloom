@@ -34,7 +34,7 @@ network at the default epoch (45 days).
 ## The non-negotiable URL habit
 
 Every link in ventloom carries `?epoch=seconds&volcano=id`. If you are sharing
-a state, share the query string; it *is* the state. There is no session.
+a state, share the query string; it _is_ the state. There is no session.
 
 ## Running the tests
 

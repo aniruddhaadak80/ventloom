@@ -28,18 +28,18 @@ reproducible.
 
 ## Capability matrix
 
-| Surface | What it delivers |
-| ------- | ---------------- |
-| **Geodesy** | Mogi source inversion (Levenberg–Marquardt, analytic Jacobian, covariance) with the depth/volume trade-off honestly reported |
-| **Seismic** | Radix-2 Cooley-Tukey FFT spectrogram, RSAM, crest factor, spectral flatness, tremor band ratios |
-| **Tephra** | Aitchison distance on the compositional simplex, single-linkage clustering, four end-member volcanic types |
-| **Forecast** | Ten-rule, ordered, family-corroborated alert engine (NORMAL/ADVISORY/WATCH/WARNING) with a situation report |
-| **Replay** | Scrub 0 → 365 days and watch the whole observatory move with the epoch |
-| **Volcanoes** | 12 systems, 84 stations, 5 instrument families |
-| **Cross-language oracle** | Rust re-implementation of the Mogi solver, checked against TypeScript at 1e-6 relative |
-| **Bulletin service** | Python (FastAPI) renderer that emits the same ten-rule verdict and Aitchison distance |
-| **Relay daemon** | Go (stdlib-only) bounded-memory telemetry polled every minute, with honest poll ages |
-| **Social card** | Per-volcano, per-epoch PNG cards rendered with `ImageResponse` |
+| Surface                   | What it delivers                                                                                                             |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Geodesy**               | Mogi source inversion (Levenberg–Marquardt, analytic Jacobian, covariance) with the depth/volume trade-off honestly reported |
+| **Seismic**               | Radix-2 Cooley-Tukey FFT spectrogram, RSAM, crest factor, spectral flatness, tremor band ratios                              |
+| **Tephra**                | Aitchison distance on the compositional simplex, single-linkage clustering, four end-member volcanic types                   |
+| **Forecast**              | Ten-rule, ordered, family-corroborated alert engine (NORMAL/ADVISORY/WATCH/WARNING) with a situation report                  |
+| **Replay**                | Scrub 0 → 365 days and watch the whole observatory move with the epoch                                                       |
+| **Volcanoes**             | 12 systems, 84 stations, 5 instrument families                                                                               |
+| **Cross-language oracle** | Rust re-implementation of the Mogi solver, checked against TypeScript at 1e-6 relative                                       |
+| **Bulletin service**      | Python (FastAPI) renderer that emits the same ten-rule verdict and Aitchison distance                                        |
+| **Relay daemon**          | Go (stdlib-only) bounded-memory telemetry polled every minute, with honest poll ages                                         |
+| **Social card**           | Per-volcano, per-epoch PNG cards rendered with `ImageResponse`                                                               |
 
 ## Architecture at a glance
 
@@ -82,17 +82,17 @@ URL see the same numbers, today and next year. See
 
 ## Code layout
 
-| Path | What | Toolchain |
-| ---- | ---- | --------- |
-| `apps/web` | Next.js 15 app, 27 routes, the observatory itself | Bun |
-| `packages/core` | The deterministic engine: Mogi, FFT, tremor, tephra, forecast | TypeScript |
-| `packages/seed` | Catalogue, station network, tephra layers, generator | TypeScript |
-| `packages/ui` | Primitives (Panel, Meter, Waveform, Spectrogram) + CSS tokens | TypeScript |
-| `packages/sdk` | Typed `ObservatoryClient` + `invertLocally` | TypeScript |
-| `crates/engine` | Rust reference oracle (Mogi, FFT, dense solve) | Cargo |
-| `services/agents` | FastAPI bulletin renderer + Aitchison distance | Python 3.12 |
-| `services/relay` | Stdlib-only telemetry daemon + ring buffer | Go 1.24 |
-| `scripts/gen-assets.mjs` | Deterministic SVG identity generator | Node (Bun) |
+| Path                     | What                                                          | Toolchain   |
+| ------------------------ | ------------------------------------------------------------- | ----------- |
+| `apps/web`               | Next.js 15 app, 27 routes, the observatory itself             | Bun         |
+| `packages/core`          | The deterministic engine: Mogi, FFT, tremor, tephra, forecast | TypeScript  |
+| `packages/seed`          | Catalogue, station network, tephra layers, generator          | TypeScript  |
+| `packages/ui`            | Primitives (Panel, Meter, Waveform, Spectrogram) + CSS tokens | TypeScript  |
+| `packages/sdk`           | Typed `ObservatoryClient` + `invertLocally`                   | TypeScript  |
+| `crates/engine`          | Rust reference oracle (Mogi, FFT, dense solve)                | Cargo       |
+| `services/agents`        | FastAPI bulletin renderer + Aitchison distance                | Python 3.12 |
+| `services/relay`         | Stdlib-only telemetry daemon + ring buffer                    | Go 1.24     |
+| `scripts/gen-assets.mjs` | Deterministic SVG identity generator                          | Node (Bun)  |
 
 ## Running the tests
 
@@ -123,13 +123,13 @@ public issue.
 
 ## Documentation map
 
-| I want to… | Go to |
-| ---------- | ----- |
-| Run it locally | [`docs/guides/quickstart.md`](docs/guides/quickstart.md) |
-| Understand a subsystem | [`docs/diagrams/`](docs/diagrams/README.md) |
-| Read why something was decided | [`docs/adr/`](docs/adr/0001-record-architecture-decisions.md) |
-| Find the alert rules | [`docs/diagrams/alert-engine.md`](docs/diagrams/alert-engine.md) |
-| See the deploy options | [`docker-compose.yml`](docker-compose.yml), [`fly.toml`](fly.toml), [`render.yaml`](render.yaml), [`railway.json`](railway.json) |
+| I want to…                     | Go to                                                                                                                            |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| Run it locally                 | [`docs/guides/quickstart.md`](docs/guides/quickstart.md)                                                                         |
+| Understand a subsystem         | [`docs/diagrams/`](docs/diagrams/README.md)                                                                                      |
+| Read why something was decided | [`docs/adr/`](docs/adr/0001-record-architecture-decisions.md)                                                                    |
+| Find the alert rules           | [`docs/diagrams/alert-engine.md`](docs/diagrams/alert-engine.md)                                                                 |
+| See the deploy options         | [`docker-compose.yml`](docker-compose.yml), [`fly.toml`](fly.toml), [`render.yaml`](render.yaml), [`railway.json`](railway.json) |
 
 ## Deploying
 
@@ -163,12 +163,12 @@ covers the canonical Vercel path).
 ## The seed
 
 7331. Everywhere. `WORLD_SEED`, the build ID (`ventloom-7331`), the RNG
-initial state, the `seed` field on `/api/network` and the social card. Searching
-the repo for `7331` and finding exactly the places you expect is itself a check
-that nothing has gone off.
+      initial state, the `seed` field on `/api/network` and the social card. Searching
+      the repo for `7331` and finding exactly the places you expect is itself a check
+      that nothing has gone off.
 
 ---
 
-*Aniruddha Adak · [DEV](https://dev.to/aniruddhaadak) ·
+_Aniruddha Adak · [DEV](https://dev.to/aniruddhaadak) ·
 [x](https://x.com/aniruddhaadak) ·
-[GitHub](https://github.com/aniruddhaadak80)*
+[GitHub](https://github.com/aniruddhaadak80)_

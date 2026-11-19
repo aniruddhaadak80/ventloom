@@ -38,11 +38,11 @@ sequenceDiagram
 
 ## The bounds
 
-| Constant | Value | Meaning |
-| -------- | ----- | ------- |
-| `DEFAULT_EPOCH_S` | 3 888 000 | 45 days: far enough in to show unrest developing |
-| `MAX_EPOCH_S` | 31 536 000 | 365 days: one seeded year, then the world stops |
-| `SECONDS_PER_DAY` | 86 400 | used only for rate display |
+| Constant          | Value      | Meaning                                          |
+| ----------------- | ---------- | ------------------------------------------------ |
+| `DEFAULT_EPOCH_S` | 3 888 000  | 45 days: far enough in to show unrest developing |
+| `MAX_EPOCH_S`     | 31 536 000 | 365 days: one seeded year, then the world stops  |
+| `SECONDS_PER_DAY` | 86 400     | used only for rate display                       |
 
 ## Why clamp rather than reject
 
@@ -59,5 +59,5 @@ always says what it rendered.
 Because it makes the whole observatory shareable and bookmarkable. Sending a
 colleague `?epoch=2592000&volcano=merapi` sends them the exact state you are
 looking at, including every number on the page. That is only possible because
-the epoch is the *entire* state; there is no session, no cache and no
+the epoch is the _entire_ state; there is no session, no cache and no
 "latest" to drift.

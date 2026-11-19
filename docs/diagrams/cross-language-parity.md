@@ -62,9 +62,9 @@ meaningful disagreement. The analytic tests are the sharper instrument here.
 
 ## What each language is actually for
 
-| Language | Role | Why it exists |
-| -------- | ---- | ------------- |
-| TypeScript | The product | Runs in the browser and in Next.js; it is what a reader sees |
-| Rust | The check | No React, no HTTP, no seed catalogue: numbers in, numbers out |
-| Python | The bulletin | Text rendering and compositional statistics, in the language that does both well |
-| Go | The relay | A long-running daemon with bounded memory and no dependency graph |
+| Language   | Role         | Why it exists                                                                    |
+| ---------- | ------------ | -------------------------------------------------------------------------------- |
+| TypeScript | The product  | Runs in the browser and in Next.js; it is what a reader sees                     |
+| Rust       | The check    | No React, no HTTP, no seed catalogue: numbers in, numbers out                    |
+| Python     | The bulletin | Text rendering and compositional statistics, in the language that does both well |
+| Go         | The relay    | A long-running daemon with bounded memory and no dependency graph                |

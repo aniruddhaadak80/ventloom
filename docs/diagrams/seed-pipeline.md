@@ -71,7 +71,7 @@ without touching the geochemistry stream, and both stay reproducible.
 
 It is four lines, has a 2<sup>32</sup>-1 period, and - the property that
 matters here - is trivially reimplementable in Rust and Python. A cross-language
-parity test is only meaningful if all three implementations can be *provably*
+parity test is only meaningful if all three implementations can be _provably_
 drawing from the same sequence, and a well-specified 32-bit integer hash is the
 only kind of generator for which that is true. A PCG or xoshiro would also
 work; a Mersenne Twister would not, because its state is 2.5 kB and its
