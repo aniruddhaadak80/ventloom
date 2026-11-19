@@ -58,7 +58,7 @@ A centred finite difference has a truncation error of O(h²) and a round-off
 error of O(ε/h). With a 4 mm measurement noise floor and ε ≈ 2.2e-16, the
 optimal step is around 1e-5 m and the best achievable derivative accuracy is
 roughly 1e-6 m/m. That sounds fine until you notice the solver would then be
-spending its iterations chasing *differencing* error rather than misfit. Writing
+spending its iterations chasing _differencing_ error rather than misfit. Writing
 the four partial derivatives out closes that off entirely, and
 `mogi.test.ts` checks them against a finite difference at a tolerance of 1e-5,
 so the algebra is verified rather than trusted.

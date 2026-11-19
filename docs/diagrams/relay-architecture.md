@@ -70,7 +70,7 @@ sequenceDiagram
 
 ## Why a daemon rather than on-demand
 
-A real observatory console needs a *current* value at a glance: a person
+A real observatory console needs a _current_ value at a glance: a person
 arriving at a shift handover does not want to trigger a recompute of the world
 by clicking a button, and they especially do not want the answer to be "the
 world, as of whatever epoch the URL happened to carry". The relay polls at a
@@ -92,7 +92,7 @@ The relay's `/status` reports how old its reading is. A cache in front of the
 observatory that silently substituted a 30-minute-old body for the fresh one
 would make that number a lie, and a lie about currency is the one failure
 mode that cannot be seen in the data. The observatory itself is safe to
-cache - it is a pure function - but the thing that *reads* it for duty staff
+cache - it is a pure function - but the thing that _reads_ it for duty staff
 is not, because a stale reading presented as current is the exact failure
 that alert systems exist to prevent.
 

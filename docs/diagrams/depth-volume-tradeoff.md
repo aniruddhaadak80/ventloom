@@ -50,7 +50,7 @@ number rather than burying it.
 
 It would be easy to print a depth of `4 217 m` with a green checkmark and call
 the inversion solved. That number is not known to 17 metres. A network of
-eight GNSS benches constrains the *combination* of depth and volume far better
+eight GNSS benches constrains the _combination_ of depth and volume far better
 than it constrains either alone, and an observatory that reports a
 high-precision depth from a single epoch is reporting a precision it has not
 earned.
