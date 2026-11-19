@@ -12,33 +12,40 @@
 
 version: 2
 updates:
-- package-ecosystem: github-actions
-  directory: /
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 5
-  groups:
-    actions-minor-patch:
-      update-types:
-      - minor
-      - patch
-- package-ecosystem: cargo
-  directory: /crates/engine
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 5
-  groups:
-    cargo-minor-patch:
-      update-types:
-      - minor
-      - patch
-- package-ecosystem: bun
-  directory: /
-  schedule:
-    interval: weekly
-  open-pull-requests-limit: 5
-  groups:
-    bun-minor-patch:
-      update-types:
-      - minor
-      - patch
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      actions-minor-patch:
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: cargo
+    directory: /crates/engine
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      cargo-minor-patch:
+        update-types:
+          - minor
+          - patch
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    # Next 16 changes the App Router build contract and TypeScript 7 removed
+    # baseUrl; both need a migration, and their PRs fail CI and sit open.
+    ignore:
+      - dependency-name: next
+        update-types: ["version-update:semver-major"]
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+    groups:
+      bun-minor-patch:
+        update-types:
+          - minor
+          - patch
